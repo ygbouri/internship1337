@@ -1,0 +1,132 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+enum etat_article {
+  NEW
+  USED
+}
+
+enum  commande_status {
+  EN_ATTENTE
+  CONFIRMEE
+  EXPEDIEE
+  LIVREE
+  ANNULEE
+}
+
+enum genre {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum user_role {
+  OWNER
+  ADMIN
+  CLIENT
+}
+
+model session {
+  id        String   @id @default(uuid())
+  sid       String   @unique
+  data      String
+  expiresAt DateTime
+}
+
+model article {
+  id_article String @id @default(uuid())
+  reference String @unique
+  name_article String
+  prix Float
+  quantite_stock Int
+  quantite_minimal Int? @default(0)
+  prix_TVA Float
+  prix_achat Float
+  prix_remise Float @default(0.0) 
+  image String[]
+  description String 
+  small_description String
+  etat etat_article
+  marque String
+  new_nbr_days Int
+  OrdreAffichage Int? @default(0)
+  lot String? @default("")
+  id_fournisseur String
+  commandes commande[]
+  wishlist user[]
+  sous_categories sous_categorie[] 
+}
+
+model commande {
+  id_commande String @id @default(uuid())
+  status commande_status @default(EN_ATTENTE)
+  price Float @default(0.0)
+  address_livraison String
+  articles article[]
+  id_user String
+  user user @relation(fields: [id_user], references: [id_user])
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model cart{
+  idCart String @id @default(uuid())
+  id_user String @unique 
+  user user @relation(fields: [id_user], references: [id_user])
+  items String[]
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+
+model user {
+  id_user String @id @default(uuid())
+  login String @unique
+  firstname String
+  lastname String
+  password String?
+  genre genre?  
+  telephone String? @default("")
+  address String?@default("")
+  image String
+  email String @unique
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  role user_role
+  ville String? @default("")
+  commands commande[]
+  cart cart[]
+  wishlist article[]
+}
+
+model categorie {
+  id_categorie String @id @default(uuid())
+  name String @unique
+  ImageCouverture String
+  description String  
+  sous_categories sous_categorie[]
+}
+
+model sous_categorie {
+  id_souscategorie String @id @default(uuid())
+  name String @unique
+  ImageCouverture String
+  description String   
+  articles article[] 
+  id_categorie String
+  categories categorie @relation(fields: [id_categorie], references: [id_categorie])
+}
+
