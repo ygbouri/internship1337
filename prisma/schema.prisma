@@ -98,11 +98,10 @@ model user {
   firstname String
   lastname String
   password String?
-  genre genre?  
   telephone String? @default("")
   address String?@default("")
   image String
-  email String @unique
+  email String @unique 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   role user_role

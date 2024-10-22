@@ -16,13 +16,13 @@ import { DialogDemo } from "./myCustomComponents/MySearch";
 import { SheetDemo } from "./myCustomComponents/SideBar";
 import { useVariable } from "./providerVariable";
 import { Button } from "./ui/button";
-import { useSocket } from "./socketContext";
+// import { useSocket } from "./socketContext";
 import { useQueryClient } from "@tanstack/react-query";
 const Navbar = () => {
   const { isDarkMode, handleDarkModeToggle } = useDarkMode();
   const { role } = useVariable();
-  const socket = useSocket();
-  const queryClient = useQueryClient();
+  // const socket = useSocket();
+  // const queryClient = useQueryClient();
 
   let color: string = isDarkMode ? "text-black" : "text-[#697764]";
   let imageMode = isDarkMode ? "/navbar/darkmode.svg" : "/navbar/lightMode.svg";
