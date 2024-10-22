@@ -95,8 +95,7 @@ model cart{
 model user {
   id_user String @id @default(uuid())
   login String @unique
-  firstname String
-  lastname String
+  fullName String 
   password String?
   telephone String? @default("")
   address String?@default("")

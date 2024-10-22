@@ -38,7 +38,7 @@ import {
   SousCategorie,
 } from "@/types/Api";
 import Image from "next/image";
-import { useSocket } from "./socketContext";
+// import { useSocket } from "./socketContext";
 import { io } from "socket.io-client";
 import { Label } from "./ui/label";
 import { it } from "node:test";

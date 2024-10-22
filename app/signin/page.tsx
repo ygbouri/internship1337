@@ -37,35 +37,6 @@ export default function Page() {
       window.location.href = "/"; // Redirige l'utilisateur authentifié
     }
   }, [status]);
-  // const mutate = useMutation({
-  //   mutationFn: async (user: login) => {
-  //     const response = await axios.post(
-  //       "http://localhost:3000/api/auth/signin",
-  //       {
-  //         username: email,
-  //         password: password,
-  //       },
-  //       { withCredentials: true }
-  //     );
-  //     if (response.status !== 201) {
-  //       setIsDoneMail(false);
-  //       return null;
-  //     }
-  //     setIsDoneMail(true);
-  //     const redirectefPath: string | null =
-  //       localStorage.getItem("pathBeforSigin");
-  //     if (redirectefPath) {
-  //       localStorage.setItem("role", response.data.data.role);
-  //       updateRole();
-  //       localStorage.removeItem("pathBeforSigin");
-  //       router.push(redirectefPath);
-  //     } else router.push("/");
-  //     localStorage.setItem("isLoged", "true");
-  //   },
-  // });
-  // console.log(isLoaded);
-  // if (!isLoaded) return <div>Chargement...</div>;
-  // const handleLoginGoogle = async (event: any) => {};
 
   return (
     <div className="flex flex-col items-center  h-full justify-center">

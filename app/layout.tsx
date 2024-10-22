@@ -12,7 +12,6 @@ import { MdArrowDropUp } from "react-icons/md";
 import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { VariablesProvider } from "@/components/providerVariable";
-// import { SocketProvider } from "@/components/socketContext";
 import { SessionProvider } from "next-auth/react";
 
 const fontSans = FontSans({
@@ -26,15 +25,14 @@ interface Props {
 }
 
 export default function RootLayout({ children, session }: Props) {
-  // `DarkModeProvider` doit envelopper tous les composants qui utilisent `useDarkMode`.
   const client = new QueryClient();
 
   return (
     <DarkModeProvider>
       <SessionProvider session={session}>
-        {/* <SocketProvider> */}
-        <LayoutContent>{children}</LayoutContent>
-        {/* </SocketProvider> */}
+        <QueryClientProvider client={client}>
+          <LayoutContent>{children}</LayoutContent>
+        </QueryClientProvider>
       </SessionProvider>
     </DarkModeProvider>
   );

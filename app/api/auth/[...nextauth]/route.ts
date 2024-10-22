@@ -2,10 +2,9 @@ import prisma from "@/lib/instancePrisma";
 import { user_role } from "@prisma/client";
 import NextAuth, { NextAuthOptions, Profile } from "next-auth";
 import FortyTwo from "next-auth/providers/42-school";
+import fs from "fs";
 
 interface customProfil extends Profile {
-  firstName: string;
-  lastName: string;
   login?: string;
   phone?: string;
 }
@@ -14,31 +13,38 @@ const options: NextAuthOptions = {
     FortyTwo({
       clientId: process.env.CLIENT_ID_42!,
       clientSecret: process.env.SECRET_ID_42!,
+      authorization: {
+        params: {
+          scope: "public",
+          redirect_uri:
+            process.env.NEXTAUTH_URL + "/api/auth/callback/42-school",
+        },
+      },
     }),
   ],
   callbacks: {
     async jwt({ token, account, user, profile }) {
-      if (account && user) {
+      if (account && profile) {
+        const { login, email, displayname, image_url } = profile;
+        const image = profile.image;
         if (account.provider === "42-school") {
-          const customUser = profile as customProfil;
           const existUser = await prisma.user.findUnique({
             where: {
-              email: profile?.email,
+              email: profile.email,
             },
           });
           let role: user_role = "CLIENT";
           const allUser = await prisma.user.findMany();
-          const name = profile?.name?.split(" ");
+          const image_url = profile.image?.link;
+          console.log("heheheh ======> ", profile.image?.link);
           if (allUser.length == 0) role = "ADMIN";
           if (!existUser) {
             const newUser = await prisma.user.create({
               data: {
-                login: customUser.login!,
-                email: customUser.email!,
-                firstname: name![0],
-                lastname: name![1],
-                telephone: customUser.phone,
-                image: customUser.image!,
+                login: login,
+                email: email,
+                fullName: displayname,
+                image: profile.image?.link.toString(),
                 role: role,
               },
             });

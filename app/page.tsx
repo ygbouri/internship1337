@@ -11,7 +11,7 @@ import AddProduct from "@/components/AddProduct";
 import Chat from "@/components/chat";
 import { useRouter } from "next/navigation";
 import Acceuil from "@/components/Acceuil";
-import { useSocket } from "@/components/socketContext";
+// import { useSocket } from "@/components/socketContext";
 import { useQueryClient } from "@tanstack/react-query";
 
 export default function Home() {

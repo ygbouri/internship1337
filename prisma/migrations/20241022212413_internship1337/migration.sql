@@ -72,10 +72,8 @@ CREATE TABLE "cart" (
 CREATE TABLE "user" (
     "id_user" TEXT NOT NULL,
     "login" TEXT NOT NULL,
-    "firstname" TEXT NOT NULL,
-    "lastname" TEXT NOT NULL,
+    "fullName" TEXT NOT NULL,
     "password" TEXT,
-    "genre" "genre",
     "telephone" TEXT DEFAULT '',
     "address" TEXT DEFAULT '',
     "image" TEXT NOT NULL,
