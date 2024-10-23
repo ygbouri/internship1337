@@ -1,5 +1,5 @@
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { useDarkMode } from "@/config/darkmode";
+import { useDarkMode } from "@/context/darkmode";
 import { useState } from "react";
 
 export function ToggleGroupDemo({ arr }: any) {

@@ -24,9 +24,9 @@ import { CiGlass } from "react-icons/ci";
 import { GiExplosionRays } from "react-icons/gi";
 
 // ************************************************************  GET  **************************************************
-export const allCategorie = () => {
+export const allCategorie = async () => {
   try {
-    const allcategorie = useAxios<allCategorieDto[]>(
+    const allcategorie = await useAxios<allCategorieDto[]>(
       "get",
       CategorieEndPoint.allCategorie
     );
@@ -50,7 +50,7 @@ export const getAllProductsofSousGa = (id_sousCategorie: string) => {
       "get",
       aritclesEndPoint.SubCategoryProduct + id_sousCategorie
     );
-    console.log("inside articles",allProducts)
+    console.log("inside articles", allProducts);
     if (allProducts) return allProducts;
   } catch (error) {}
 };
@@ -88,9 +88,7 @@ export const caracteristiqueOfSousCategorie = (id_sousCategorie: string) => {
   } catch (error) {}
 };
 
-export const filterProductsByCara = ()=>{
-
-}
+export const filterProductsByCara = () => {};
 // ************************************************************  POST  **************************************************
 
 export const supplierPost = async (data: FournisseurPost) => {
@@ -106,7 +104,7 @@ export const supplierPost = async (data: FournisseurPost) => {
 };
 export const postCategorie = async (data: SousCategoriePost) => {
   try {
-    console.log("from post Categorie",data)
+    console.log("from post Categorie", data);
     const response = useAxiosPost<SousCategoriePost>(
       "post",
       CategorieEndPoint.PostCategorie,

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import DisplayProduct from "../components/DisplayProduct";
-import { useDarkMode } from "@/config/darkmode";
+import { useDarkMode } from "@/context/darkmode";
 import Link from "next/link";
 
 import { ListProduct } from "@/components/ListProduct";

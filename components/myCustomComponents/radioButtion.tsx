@@ -1,6 +1,6 @@
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { useDarkMode } from "@/config/darkmode";
+import { useDarkMode } from "@/context/darkmode";
 import { caraSousCateRequired, filterCara } from "@/types/Api";
 
 export function RadioGroupDemo(props: {

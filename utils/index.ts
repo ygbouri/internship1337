@@ -3,10 +3,9 @@ import { AwardIcon } from "lucide-react";
 
 // const baseUrl = `http://${process.env.BACKEND_IP}/`;
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:5000/", // Define your base URL here
-  // timeout: 5000, // Set timeout duration
+  baseURL: "http://localhost:3000/api",
   headers: {
-    "Content-Type": "application/json", // Define common headers here
+    "Content-Type": "application/json",
   },
   withCredentials: true,
 });
@@ -14,7 +13,7 @@ const axiosInstance = axios.create({
 // export default axiosInstance;
 
 const axiosInstancetoPost = axios.create({
-  baseURL: "http://localhost:5000/", // Define your base URL here
+  baseURL: "http://localhost:3000/api", // Define your base URL here
   // timeout: 5000, // Set timeout duration
   headers: {
     "Content-Type": "multipart/form-data", // Define common headers here
@@ -37,7 +36,7 @@ export const useAxios = async <T>(
 ): Promise<T> => {
   try {
     const response = await axiosInstance({ method, url: endpoint, data });
-    return response.data;
+    return response.data.data;
     // return response.statusText;
   } catch (error) {
     throw error as AxiosError;
@@ -50,7 +49,7 @@ export const useAxiosPost = async <T>(
   data: Record<any, any>
 ): Promise<T> => {
   try {
-    console.log("from categorie",method, endpoint, data);
+    console.log("from categorie", method, endpoint, data);
     const response = await axiosInstancetoPost({ method, url: endpoint, data });
 
     return response.data;

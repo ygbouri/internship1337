@@ -31,8 +31,8 @@ import {
   // DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useState } from "react";
-import { useDarkMode } from "@/config/darkmode";
+import { useEffect, useState } from "react";
+import { useDarkMode } from "@/context/darkmode";
 import {
   DropdownBasketIconProps,
   DropdownNotificationIconProps,
@@ -46,6 +46,7 @@ import Link from "next/link";
 import { unique } from "next/dist/build/utils";
 import { redirect } from "next/navigation";
 import { IoNotificationsOutline } from "react-icons/io5";
+import { signOut } from "next-auth/react";
 export function DropdownLanguageIcon() {
   const [choseImg, setImage] = useState("/navbar/anglaisLang.svg");
   return (
@@ -250,48 +251,37 @@ export function DropdownNotifIcon({
   );
 }
 
-export function DropdownProfile() {
+export function DropdownProfile(props: { imageUrl: string | undefined }) {
+  const { imageUrl } = props;
   let profile: string = "Login in";
   let isLog: boolean = false;
-  if (typeof window === undefined) {
-    const checker = localStorage.getItem("isLoged") === "true" ? true : false;
-    if (checker) {
-      profile = "Profile";
-      isLog = true;
+  useEffect(() => {
+    if (typeof window !== undefined) {
+      const checker = localStorage.getItem("isLoged") === "true" ? true : false;
+      if (checker) {
+        profile = "Profile";
+        isLog = true;
+      }
     }
-  }
+  }, []);
   const handleProfile = () => {
     // console.log("signup");
     const pathBeforSignin: string = window.location.pathname;
     console.log("path befor signin", pathBeforSignin);
     localStorage.setItem("pathBeforSigin", pathBeforSignin);
     if (!isLog) window.location.href = "/signin";
-
-    // else
-    //   redirect("/user/")
   };
   const handleLogout = () => {
-    fetch("http://localhost:5000/auth/logout", {
-      method: "GET", // ou 'POST' selon la configuration de votre serveur
-      credentials: "include", // Important pour inclure les cookies de session dans la requête
-    })
-      .then((response) => {
-        // Gérer la réponse du serveur
-        console.log("Déconnecté avec succès");
-        // Rediriger l'utilisateur vers la page de connexion ou autre
-        localStorage.removeItem("isLoged");
-        localStorage.removeItem("role");
-        window.location.href = "/";
-      })
-      .catch((error) => {
-        console.error("Erreur lors de la déconnexion", error);
-      });
+    signOut({ callbackUrl: "/" }).then(() => {
+      localStorage.removeItem("isLoged");
+      localStorage.removeItem("role");
+    });
   };
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <img
-          src="/profile.jpeg"
+          src={imageUrl ? imageUrl : `/userNExist.jpg`}
           alt=""
           className="size-8 rounded-full object-cover"
         />
@@ -302,18 +292,7 @@ export function DropdownProfile() {
             <User className="mr-2 h-4 w-4" />
             <span>{profile}</span>
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Settings className="mr-2 h-4 w-4" />
-            <a href="/setting">Settings</a>
-          </DropdownMenuItem>
         </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup></DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <LifeBuoy className="mr-2 h-4 w-4" />
-          <a href="/support">Support</a>
-        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout}>
           <LogOut className="mr-2 h-4 w-4" />

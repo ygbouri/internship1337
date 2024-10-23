@@ -1,5 +1,5 @@
 "use client";
-import { useDarkMode } from "@/config/darkmode";
+import { useDarkMode } from "@/context/darkmode";
 import React, { useEffect, useState } from "react";
 import {
   allCategorie,

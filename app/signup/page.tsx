@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useDarkMode } from "@/config/darkmode";
+import { useDarkMode } from "@/context/darkmode";
 import { useEffect, useState } from "react";
 import { SelectEtatProduct } from "@/components/myCustomComponents/select";
 import { useMutation } from "@tanstack/react-query";

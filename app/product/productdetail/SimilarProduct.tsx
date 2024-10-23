@@ -1,4 +1,4 @@
-import { useDarkMode } from "@/config/darkmode";
+import { useDarkMode } from "@/context/darkmode";
 import React from "react";
 import { AiFillStar } from "react-icons/ai";
 

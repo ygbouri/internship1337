@@ -24,7 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useDarkMode } from "@/config/darkmode";
+import { useDarkMode } from "@/context/darkmode";
 import { allCategorieDto, Fournisseur, SousCategorie } from "@/types/Api";
 import { type } from "os";
 import { DialogBrand, DialogCategorie, DialogFournisseur } from "./Dialog";

@@ -20,17 +20,13 @@ import {
   CheckboxDemo,
   CheckboxDemoCara,
 } from "@/components/myCustomComponents/checkbox";
-import { useDarkMode } from "@/config/darkmode";
+import { useDarkMode } from "@/context/darkmode";
 import { PaginationDemo } from "@/components/myCustomComponents/pagination";
 import { Product, checkbokCategorie } from "@/types";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+
 import {
-  allCategorie,
-  allSousCategorie,
-  caracteristiqueOfSousCategorie,
-  getAllProductsofSousGa,
-} from "@/requests/categorie";
-import {
+  allCategorieDto,
   caraSousCateRequired,
   filterCara,
   productCara,
@@ -43,6 +39,7 @@ import { io } from "socket.io-client";
 import { Label } from "./ui/label";
 import { it } from "node:test";
 import { RadioGroupDemo } from "./myCustomComponents/radioButtion";
+import { allCategorie } from "@/service/fetchCategorie";
 
 export default function Acceuil() {
   const [showCategorie, setShow] = useState(false);
@@ -63,6 +60,7 @@ export default function Acceuil() {
   const [idCategorie, setIdCategorie] = useState("");
   const [idSousCategorie, setSousCategorie] = useState("");
   const [refetchFilterProduct, setRefetchFilterProduct] = useState(false);
+  const [Categorie, setCategorie] = useState<allCategorieDto[]>([]);
   const [Cara, setCara] = useState<caraSousCateRequired[]>([]);
   let id = 0;
   const queryClient = useQueryClient();
@@ -81,9 +79,14 @@ export default function Acceuil() {
   };
 
   useEffect(() => {
-    // console.log("if selected items", selectedItemCaract);
-    // console.log("if selected Map items",selectedItemsMap)
-  }, [selectedItemCaract.length]);
+    const getAllCategorie = async () => {
+      const data = await allCategorie();
+      console.log("first", data);
+      if (data) setCategorie(data);
+      console.log("shit here we go again", Categorie);
+    };
+    getAllCategorie();
+  }, []);
   const handleSelectCara = (item: filterCara) => {
     // if (selectedItemCaract.some((items:filterCara)=>(items.name === item.name) && (items.value === item.value)))
     //   setSelectedItemCaract((prev:filterCara[])=> prev.filter((items:filterCara)=>(items.name !== item.name) && (items.value !== item.value)))
@@ -116,75 +119,9 @@ export default function Acceuil() {
       );
     }
   };
-  const { data: Categorie } = useQuery({
-    queryKey: ["allCategorie"],
-    queryFn: allCategorie,
-  });
-
-  const { data: SousCategories } = useQuery({
-    queryKey: ["SousCategorie", idCategorie],
-    queryFn: () => {
-      return allSousCategorie(idCategorie);
-    },
-    enabled: idCategorie != "",
-  });
-
-  const { data: articles } = useQuery({
-    queryKey: ["articles", idSousCategorie],
-    queryFn: () => {
-      return getAllProductsofSousGa(idSousCategorie);
-    },
-    enabled: idSousCategorie != "",
-  });
-
-  const { data: Caracteristiques } = useQuery({
-    queryKey: ["Caracterisitque", idSousCategorie],
-    queryFn: () => {
-      return caracteristiqueOfSousCategorie(idSousCategorie);
-    },
-    enabled: idSousCategorie != "",
-  });
-
-  const { data: filterProducts } = useQuery({
-    queryKey: ["filterProduct"],
-    queryFn: () => {
-      return;
-    },
-    enabled: refetchFilterProduct,
-  });
 
   useEffect(() => {
-    if (SousCategories?.length == 0) {
-      setCara([]);
-      setProducts([]);
-    }
-  }, [idCategorie]);
-  useEffect(() => {
-    if (Caracteristiques && Caracteristiques.length > 0) setCara(Cara);
-  }, [Caracteristiques?.length]);
-  useEffect(() => {
-    if (articles && articles.length > 0) {
-      setProducts(articles);
-    } else {
-      setProducts([]);
-    }
-  }, [idCategorie, idSousCategorie, articles?.length]);
-  let countArticle = 0;
-  useEffect(() => {
-    if (Categorie) {
-      countArticle = Categorie.reduce((acc, item) => {
-        return (
-          acc +
-          item.sous_categories?.reduce((acca, items) => {
-            return acca + items.articles.length;
-          }, 0)
-        );
-      }, 0);
-    }
-  }, [Categorie?.length]);
-
-  useEffect(() => {
-    queryClient.invalidateQueries({ queryKey: ["articles", idSousCategorie] });
+    // queryClient.invalidateQueries({ queryKey: ["articles", idSousCategorie] });
   }, [idSousCategorie]);
 
   // const arr: checkbokCategorie[] = [
@@ -216,31 +153,32 @@ export default function Acceuil() {
               CATEGORIES
             </h1>
             <div className="w-full flex flex-col ml-6 gap-4">
-              {Categorie?.slice(0, showCategorie ? Categorie.length : 4).map(
-                (item, index) => (
-                  <div key={index} className="w-[90%]  flex justify-between">
-                    <CheckboxDemo
-                      key={item.id_categorie}
-                      parametre={item}
-                      isSelected={item.id_categorie === selectedItemCatgorie}
-                      onSelect={() => handleSelect(item.id_categorie, 0)}
-                    ></CheckboxDemo>
-                    <label
-                      className={`px-[2px] py-[2px] ${
-                        isDarkMode ? "bg-[#F3F6F8]" : " bg-[#2B2E31]"
-                      } ${
-                        isDarkMode ? "text-[#8C9097]" : "text-white"
-                      } font-bold text-xxs rounded-sm`}
-                    >
-                      {item.sous_categories
-                        ?.reduce((acc: number, item: SousCategorie) => {
-                          return acc + item.articles?.length;
-                        }, 0)
-                        .toLocaleString("en-US")}
-                    </label>
-                  </div>
-                )
-              )}
+              {Array.isArray(Categorie) &&
+                Categorie.slice(0, showCategorie ? Categorie.length : 4).map(
+                  (item, index) => (
+                    <div key={index} className="w-[90%]  flex justify-between">
+                      <CheckboxDemo
+                        key={item.id_categorie}
+                        parametre={item}
+                        isSelected={item.id_categorie === selectedItemCatgorie}
+                        onSelect={() => handleSelect(item.id_categorie, 0)}
+                      ></CheckboxDemo>
+                      <label
+                        className={`px-[2px] py-[2px] ${
+                          isDarkMode ? "bg-[#F3F6F8]" : " bg-[#2B2E31]"
+                        } ${
+                          isDarkMode ? "text-[#8C9097]" : "text-white"
+                        } font-bold text-xxs rounded-sm`}
+                      >
+                        {item.sous_categories
+                          ?.reduce((acc: number, item: SousCategorie) => {
+                            return acc + item.articles?.length;
+                          }, 0)
+                          .toLocaleString("en-US")}
+                      </label>
+                    </div>
+                  )
+                )}
               <button
                 onClick={() => setShow(!showCategorie)}
                 className="w-[20%] h-6 mb-4 px-2 py-1 bg-[#F3EFFC] text-[#855ADF] text-xs rounded-lg transition-colors"
@@ -257,7 +195,7 @@ export default function Acceuil() {
             <h1 className="w-full ml-4 mt-4 text-[#8D9198] font-bold">
               SUBCATEGORIES
             </h1>
-            <div className="w-full flex flex-col ml-6 gap-4">
+            {/* <div className="w-full flex flex-col ml-6 gap-4">
               {SousCategories?.slice(
                 0,
                 showSousCategorie ? SousCategories.length : 4
@@ -288,7 +226,7 @@ export default function Acceuil() {
               >
                 {showSousCategorie ? "More-" : "More+"}
               </button>
-            </div>
+            </div> */}
           </div>
 
           <div

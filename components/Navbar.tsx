@@ -1,7 +1,7 @@
 "use client";
 import React, { useContext, useEffect, useState } from "react";
 import Image from "next/image";
-import { useDarkMode } from "../config/darkmode";
+import { useDarkMode } from "../context/darkmode";
 import {
   DropdownBasketIcon,
   DropdownLanguageIcon,
@@ -16,16 +16,17 @@ import { DialogDemo } from "./myCustomComponents/MySearch";
 import { SheetDemo } from "./myCustomComponents/SideBar";
 import { useVariable } from "./providerVariable";
 import { Button } from "./ui/button";
-// import { useSocket } from "./socketContext";
 import { useQueryClient } from "@tanstack/react-query";
+import { useUser } from "@/context/userData";
 const Navbar = () => {
   const { isDarkMode, handleDarkModeToggle } = useDarkMode();
+  const [imageState, setImageState] = useState<boolean>(false);
   const { role } = useVariable();
-  // const socket = useSocket();
-  // const queryClient = useQueryClient();
-
+  const user = useUser();
+  let roleUser: string = "";
   let color: string = isDarkMode ? "text-black" : "text-[#697764]";
-  let imageMode = isDarkMode ? "/navbar/darkmode.svg" : "/navbar/lightMode.svg";
+  if (user?.role && user.role === "ADMIN") roleUser = "Admin";
+  else if (user?.role && user.role === "CLIENT") roleUser = "Client";
 
   return (
     <div
@@ -34,13 +35,13 @@ const Navbar = () => {
       } items-center  select-none border-b-1 shadow-sm `}
     >
       <div className=" w-[50%] gap-4 flex pl-6 items-center">
-        {role && <SheetDemo></SheetDemo>}
+        {roleUser === "Admin" && <SheetDemo></SheetDemo>}
         <h1
           className={`font-bold  text-[25px] ${color}`}
           onClick={() => (window.location.href = "/")}
         >
           {" "}
-          Dev
+          MyStore
         </h1>
       </div>
 
@@ -54,13 +55,13 @@ const Navbar = () => {
             onClick={handleDarkModeToggle}
           />
         </div>
-        <div className="w-fit h-full   items-center justify-between flex">
-          <DropdownProfile></DropdownProfile>
+        <div className="w-fit h-full items-center justify-between flex gap-2">
+          <DropdownProfile imageUrl={user?.image}></DropdownProfile>
           <div className="h-full items-start  justify-center flex flex-col">
             <span className="whitespace-nowrap text-xs text-[#697794] font-bold">
-              Youssef Gbouri
+              {user?.fullName ? user.fullName : ""}
             </span>
-            <span className=" text-xs text-[#697794]">admin</span>
+            <span className=" text-xs text-[#697794]">{roleUser}</span>
           </div>
         </div>
       </div>

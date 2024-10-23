@@ -1,18 +1,16 @@
 "use client";
 import type { Metadata } from "next";
 import "./globals.css";
-// import Sidebar from "@/components/Sidebar";
 import Navbar from "@/components/Navbar";
-import { DarkModeProvider, useDarkMode } from "../config/darkmode";
-
+import { DarkModeProvider, useDarkMode } from "../context/darkmode";
 import { Inter as FontSans } from "next/font/google";
 
 import { cn } from "@/lib/utils";
-import { MdArrowDropUp } from "react-icons/md";
-import { useState } from "react";
+
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { VariablesProvider } from "@/components/providerVariable";
 import { SessionProvider } from "next-auth/react";
+import { UserProvider } from "@/context/userData";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -30,9 +28,11 @@ export default function RootLayout({ children, session }: Props) {
   return (
     <DarkModeProvider>
       <SessionProvider session={session}>
-        <QueryClientProvider client={client}>
-          <LayoutContent>{children}</LayoutContent>
-        </QueryClientProvider>
+        <UserProvider>
+          <QueryClientProvider client={client}>
+            <LayoutContent>{children}</LayoutContent>
+          </QueryClientProvider>
+        </UserProvider>
       </SessionProvider>
     </DarkModeProvider>
   );

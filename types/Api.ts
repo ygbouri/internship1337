@@ -1,5 +1,5 @@
 export const CategorieEndPoint = {
-  allCategorie: "categorie/getAllCategorie",
+  allCategorie: "categorie/",
   SousCategorie: "categorie/getCategorie/",
   PostSousCategorie: "sous-categorie/addSousCategorie",
   PostCategorie: "categorie/addCategorie",
@@ -27,9 +27,7 @@ export interface allCategorieDto {
   id_categorie: string;
   name: string;
   ImageCouverture: string;
-  imageMiniature: string;
   description: string;
-  smallDescription: string;
   sous_categories: SousCategorie[];
 }
 
@@ -37,9 +35,7 @@ export interface SousCategorie {
   id_souscategorie: string;
   name: string;
   ImageCouverture: string;
-  imageMiniature: string;
   description: string;
-  smallDescription: string;
   id_categorie: string;
   articles: ProductGet[];
 }
@@ -98,7 +94,6 @@ export interface caraSousCate {
   value: string;
 }
 
-
 export interface caraSousCateRequired {
   id_caracteristique: string;
   name: string;
@@ -117,9 +112,9 @@ export interface nameValue {
   value: string;
 }
 
-export interface filterCara{
-  name:string;
-  value:string;
+export interface filterCara {
+  name: string;
+  value: string;
 }
 
 export interface Product {
@@ -166,9 +161,7 @@ export interface ProductGet {
   // Serial: string[];
 }
 
-export interface productCara{
-  article:ProductGet;
-  caracteristique:caraSousCateRequired[];
-
+export interface productCara {
+  article: ProductGet;
+  caracteristique: caraSousCateRequired[];
 }
-

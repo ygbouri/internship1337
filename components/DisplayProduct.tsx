@@ -14,7 +14,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { PaginationDemo } from "./myCustomComponents/pagination";
-import { useDarkMode } from "../config/darkmode";
+import { useDarkMode } from "../context/darkmode";
 
 export default function DisplayProduct() {
   const [showCategorie, setShow] = useState(false);

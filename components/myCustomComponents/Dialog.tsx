@@ -17,7 +17,7 @@ import { LiaCoinsSolid } from "react-icons/lia";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-import { useDarkMode } from "@/config/darkmode";
+import { useDarkMode } from "@/context/darkmode";
 import {
   postCategorie,
   postSousCategorie,

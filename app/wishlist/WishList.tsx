@@ -15,7 +15,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { PaginationDemo } from "../../components/myCustomComponents/pagination";
-import { useDarkMode } from "../../config/darkmode";
+import { useDarkMode } from "../../context/darkmode";
 import { DropdownBasketIcon } from "../../components/myCustomComponents/Mydrpdown";
 import { CommandDemo } from "../../components/myCustomComponents/search";
 

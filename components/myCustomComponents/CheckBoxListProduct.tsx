@@ -4,7 +4,7 @@
 import { ParkingMeter } from "lucide-react";
 import { Checkbox } from "../ui/checkbox";
 import { on } from "events";
-import { useDarkMode } from "@/config/darkmode";
+import { useDarkMode } from "@/context/darkmode";
 
 export function CheckboxListProduct({ parametre, isSelected, onSelect }: any) {
   const { isDarkMode, handleDarkModeToggle } = useDarkMode();

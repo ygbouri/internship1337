@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { useDarkMode } from "@/config/darkmode";
+import { useDarkMode } from "@/context/darkmode";
 import { CheckboxListProduct } from "../../components/myCustomComponents/CheckBoxListProduct";
 
 import { CiEdit, CiHeart } from "react-icons/ci";

@@ -27,7 +27,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "config/darkmode.tsx"
+    "context/darkmode.tsx"
   ],
   "exclude": ["node_modules"]
 }

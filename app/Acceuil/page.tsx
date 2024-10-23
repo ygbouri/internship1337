@@ -17,7 +17,7 @@ import { useRouter } from "next/router";
 // import { PaginationDemo } from "./myCustomComponents/pagination";
 // import { useDarkMode } from "../config/darkmode";
 import { CheckboxDemo } from "@/components/myCustomComponents/checkbox";
-import { useDarkMode } from "@/config/darkmode";
+import { useDarkMode } from "@/context/darkmode";
 import { PaginationDemo } from "@/components/myCustomComponents/pagination";
 import { Product, checkbokCategorie } from "@/types";
 import { useQuery, useQueryClient } from "@tanstack/react-query";

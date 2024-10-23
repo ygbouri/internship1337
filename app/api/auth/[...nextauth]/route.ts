@@ -2,12 +2,12 @@ import prisma from "@/lib/instancePrisma";
 import { user_role } from "@prisma/client";
 import NextAuth, { NextAuthOptions, Profile } from "next-auth";
 import FortyTwo from "next-auth/providers/42-school";
-import fs from "fs";
 
 interface customProfil extends Profile {
   login?: string;
   phone?: string;
 }
+
 const options: NextAuthOptions = {
   providers: [
     FortyTwo({
@@ -25,8 +25,7 @@ const options: NextAuthOptions = {
   callbacks: {
     async jwt({ token, account, user, profile }) {
       if (account && profile) {
-        const { login, email, displayname, image_url } = profile;
-        const image = profile.image;
+        const { login, email, displayname } = profile;
         if (account.provider === "42-school") {
           const existUser = await prisma.user.findUnique({
             where: {
@@ -35,16 +34,14 @@ const options: NextAuthOptions = {
           });
           let role: user_role = "CLIENT";
           const allUser = await prisma.user.findMany();
-          const image_url = profile.image?.link;
-          console.log("heheheh ======> ", profile.image?.link);
           if (allUser.length == 0) role = "ADMIN";
           if (!existUser) {
             const newUser = await prisma.user.create({
               data: {
                 login: login,
-                email: email,
+                email: email!,
                 fullName: displayname,
-                image: profile.image?.link.toString(),
+                image: profile.image?.link.toString()!,
                 role: role,
               },
             });

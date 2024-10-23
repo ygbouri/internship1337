@@ -10,7 +10,7 @@ import "swiper/css/navigation";
 import "swiper/css/thumbs";
 
 import { Autoplay, FreeMode, Navigation, Thumbs } from "swiper/modules";
-import { useDarkMode } from "@/config/darkmode";
+import { useDarkMode } from "@/context/darkmode";
 
 const images = [
   "/swatch.png",

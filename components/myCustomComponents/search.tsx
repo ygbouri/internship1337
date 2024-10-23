@@ -17,7 +17,7 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from "@/components/ui/command";
-import { useDarkMode } from "@/config/darkmode";
+import { useDarkMode } from "@/context/darkmode";
 import { useState } from "react";
 
 export function CommandDemo({ arr, onSelect }: any) {

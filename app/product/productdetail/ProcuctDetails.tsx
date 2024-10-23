@@ -1,7 +1,7 @@
 import React from "react";
 import PreviewAndSimilarProduct from "./PreviewAndSimilarProduct";
 import Details from "./Details";
-import { useDarkMode } from "@/config/darkmode";
+import { useDarkMode } from "@/context/darkmode";
 
 function ProcuctDetails() {
   const { isDarkMode } = useDarkMode();

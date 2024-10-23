@@ -1,5 +1,5 @@
 "use client";
-import { useDarkMode } from "@/config/darkmode";
+import { useDarkMode } from "@/context/darkmode";
 import Link from "next/link";
 import React, { useState } from "react";
 import { BiSolidOffer } from "react-icons/bi";
