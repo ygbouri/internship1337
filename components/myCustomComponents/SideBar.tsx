@@ -37,18 +37,17 @@ export function SheetDemo() {
       </SheetTrigger>
       <SheetContent side={"left"} className="w-[200px] flex flex-col gap-12">
         <SheetHeader>
-          <SheetTitle>Name Of WebSite</SheetTitle>
+          <SheetTitle>MyStore</SheetTitle>
           <SheetDescription>The missions of Admins</SheetDescription>
         </SheetHeader>
         <div className="flex flex-col gap-8">
           <div className="flex gap-2">
-            <Link href={"/Dashboard"} className="flex gap-2">
+            <Link href={"/updateProduct"} className="flex gap-2">
               <RxDashboard></RxDashboard>
               <Label htmlFor="name" className="text-right">
-                Dashboard
+                UpdateProduct
               </Label>
             </Link>
-            {/* <Input id="name" value="Pedro Duarte" className="col-span-3" /> */}
           </div>
           <div className="flex gap-2">
             <Link href={"/addProduct"} className="hover:align-sub flex gap-2">
@@ -57,29 +56,6 @@ export function SheetDemo() {
                 Products
               </Label>
             </Link>
-            {/* <Input id="name" value="Pedro Duarte" className="col-span-3" /> */}
-          </div>
-
-          <div className="flex gap-2">
-            <BsBasket3></BsBasket3>
-            <Label htmlFor="name" className="text-right">
-              Orders
-            </Label>
-          </div>
-
-          <div className="flex gap-2">
-            <FaRegStar></FaRegStar>
-            <Label htmlFor="name" className="text-right">
-              Reviews
-            </Label>
-            {/* <Input id="name" value="Pedro Duarte" className="col-span-3" /> */}
-          </div>
-          <div className="flex gap-2">
-            <TbHandClick></TbHandClick>
-            <Label htmlFor="name" className="text-right">
-              manual control
-            </Label>
-            {/* <Input id="name" value="Pedro Duarte" className="col-span-3" /> */}
           </div>
         </div>
       </SheetContent>

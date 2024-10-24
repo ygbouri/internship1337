@@ -12,6 +12,7 @@ export const aritclesEndPoint = {
 
 export const ProductEndPoint = {
   ProductPost: "/articles/",
+  proudtPUT: "/updateArticle/",
 };
 // idCategorie
 export interface allCategorieDto {

@@ -37,10 +37,26 @@ import { Product, etat_article } from "@/types";
 import { useEffect, useState } from "react";
 import { useSelectedLayoutSegment } from "next/navigation";
 import { ToggleGroupDemo } from "@/components/myCustomComponents/toggleGroup";
+import { useRouter } from "next/router";
+import { getProduct } from "@/service/fetchCategorie";
+import { ProductGet } from "@/types/Api";
 
 export default function Page() {
   const { isDarkMode, handleDarkModeToggle } = useDarkMode();
-  const [inputValue, setInputValue] = useState("");
+  const [products, setProducts] = useState<ProductGet>();
+
+  const router = useRouter();
+  const id_article = router.query;
+
+  useEffect(() => {
+    if (id_article) {
+      const getProducts = async () => {
+        const data = await getProduct(id_article.toLocaleString());
+        if (data) setProducts(data);
+      };
+      getProducts();
+    }
+  }, [id_article]);
   let num: number = 0;
   let arr: Product[] = [
     {

@@ -6,7 +6,6 @@ import ProcuctDetails from "../productdetail/ProcuctDetails";
 import { useParams } from "next/navigation";
 import { getProduct } from "@/service/fetchCategorie";
 import { ProductGet } from "@/types/Api";
-import { useRouter } from "next/router";
 
 export default function Page({ params }: { params: { id: string } }) {
   const [product, setProduct] = useState<ProductGet>();

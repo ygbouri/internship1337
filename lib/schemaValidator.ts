@@ -30,3 +30,19 @@ export const articlePostSchema = yup.object().shape({
   marque: yup.string().required(),
   id_souscategorie: yup.string().required(),
 });
+
+export const articlePostSchemaPUT = yup.object().shape({
+  id_article: yup.string().optional(),
+  reference: yup.string().optional(),
+  name_article: yup.string().optional(),
+  prix: yup.number().optional(),
+  quantite_stock: yup.number().optional(),
+  image: yup.array().of(yup.string()),
+  description: yup.string().optional(),
+  small_description: yup.string().optional(),
+  etat: yup
+    .mixed<etat_article>()
+    .oneOf(etatArticle as etat_article[], "Invalid status")
+    .required(),
+  marque: yup.string().optional(),
+});

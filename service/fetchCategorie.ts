@@ -107,3 +107,15 @@ export const postProductD = async (data: Product) => {
     if (response) return response;
   } catch (error) {}
 };
+
+// ************************************************************  PUT  **************************************************
+export const putarticle = async (data: Product) => {
+  try {
+    const response = await useAxios<Product>(
+      "put",
+      ProductEndPoint.proudtPUT,
+      data
+    );
+    if (response) return response;
+  } catch (error) {}
+};

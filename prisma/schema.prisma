@@ -57,31 +57,10 @@ model article {
   small_description String
   etat etat_article
   marque String
-  commandes commande[]
-  wishlist user[]
+  cart user[]
   sous_categories sous_categorie[] 
 }
 
-model commande {
-  id_commande String @id @default(uuid())
-  status commande_status @default(EN_ATTENTE)
-  price Float @default(0.0)
-  address_livraison String
-  articles article[]
-  id_user String
-  user user @relation(fields: [id_user], references: [id_user])
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-}
-
-model cart{
-  idCart String @id @default(uuid())
-  id_user String @unique 
-  user user @relation(fields: [id_user], references: [id_user])
-  items String[]
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-}
 
 
 model user {
@@ -97,8 +76,6 @@ model user {
   updated_at DateTime @updatedAt
   role user_role
   ville String? @default("")
-  commands commande[]
-  cart cart[]
   wishlist article[]
 }
 

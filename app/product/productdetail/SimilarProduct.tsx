@@ -10,10 +10,6 @@ function SimilarProduct({ product }: any) {
   const productData = product as ProductGetData;
   console.log(productData?.sous_categories[0].id_souscategorie);
   useEffect(() => {
-    console.log(
-      "kldsjfkljfkldajfklasjklsjkljfdkls============> " +
-        productData?.sous_categories[0].id_souscategorie
-    );
     if (productData?.sous_categories[0].id_souscategorie) {
       const getSemiliarProduct = async () => {
         const data = await getAllProductsofSousGa(
@@ -43,7 +39,7 @@ function SimilarProduct({ product }: any) {
         {semiliarProduct?.map((item, index) => (
           <div
             key={index}
-            className="flex red xl:max-h-full overflow-auto  hide-scrollbar  p-2 justify-between "
+            className="flex  xl:max-h-full overflow-auto  hide-scrollbar  p-2 justify-between "
           >
             <div className="flex gap-4">
               <img

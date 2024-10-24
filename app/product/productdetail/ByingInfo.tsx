@@ -1,5 +1,7 @@
 "use client";
 import { useDarkMode } from "@/context/darkmode";
+import { useUser } from "@/context/userData";
+import { ProductGet } from "@/types/Api";
 import Link from "next/link";
 import React, { useState } from "react";
 import { BiSolidOffer } from "react-icons/bi";
@@ -7,6 +9,8 @@ import { BiSolidOffer } from "react-icons/bi";
 const ByingInfo = ({ product }: any) => {
   const [showOffers, setOffers] = useState(false);
   const { isDarkMode } = useDarkMode();
+  const user = useUser();
+  const productData = product as ProductGet;
   let color: string = isDarkMode ? " text-black" : "text-[#BBBBBC] ";
 
   const arr = [
@@ -104,28 +108,16 @@ const ByingInfo = ({ product }: any) => {
           </div>
           {/* <div className="">devlivrey</div> */}
           <div className=" flex flex-col gap-2">
-            <div className="w-[90%] ">
-              <Link href="/cart">
-                <button className="p-2 font-medium text-white bg-[#8459DF] w-[100%] rounded-md">
-                  Add to Cart
-                </button>
-              </Link>
-            </div>
-            <div className="w-[90%] ">
-              <Link href="/PageBuy">
-                <button className="p-2 font-medium text-white bg-[#26BF94] w-[100%] rounded-md">
-                  Buy Now
-                </button>
-              </Link>
-            </div>
-            <div className="w-[90%] ">
-              <Link href={"/wishlist"}>
-                <button className="p-2 font-medium  bg-[#F3F6F8] w-[100%] rounded-md">
-                  Add to Wishlist
-                </button>
-              </Link>
-            </div>
-          </div>
+            {user?.role === "ADMIN" && (
+              <div className="w-[90%] ">
+                <Link href={`/updateProduct/${productData?.id_article}`}>
+                  <button className="p-2 font-medium  bg-[#F3F6F8] w-[100%] rounded-md">
+                    Update Product
+                  </button>
+                </Link>
+              </div>
+            )}
+          </div>{" "}
         </div>
       </div>
       <div className="h-[600px] max-h-[600px] flex max-lg:justify-center justify-start max-lg:px-1 ">
