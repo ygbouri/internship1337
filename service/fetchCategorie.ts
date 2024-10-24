@@ -4,6 +4,7 @@ import {
   Product,
   ProductEndPoint,
   ProductGet,
+  ProductGetData,
   SousCategorie,
   SousCategoriePost,
   allCategorieDto,
@@ -43,7 +44,7 @@ export const getProduct = async (id_article: string) => {
 
 export const getProductSimiliarProduct = async (id_article: string) => {
   try {
-    const product = await useAxios<ProductGet>(
+    const product = await useAxios<ProductGetData>(
       "get",
       ProductEndPoint.ProductPost + `/?id_article=${id_article}`
     );

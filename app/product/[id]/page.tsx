@@ -17,11 +17,11 @@ export default function Page({ params }: { params: { id: string } }) {
       const getProducts = async () => {
         const data = await getProduct(id);
         if (data) setProduct(data);
-        console.log("fsfdsfd", product);
       };
       getProducts();
     }
   }, [id]);
+  console.log("fsfdsfd", product?.id_souscategorie);
   return (
     <div className=" ">
       <ProcuctDetails product={product} />

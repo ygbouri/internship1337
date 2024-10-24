@@ -75,25 +75,15 @@ export interface filterCara {
 }
 
 export interface Product {
-  // id_article?: string;
   reference: string;
-  // name_article: string;
-  // prix: number;
-  // quantite_stock: number;
-  // quantite_minimal: number;
-  // prix_TVA: number;
-  // prix_achat: number;
-  // // prix_remise?: number;
+  name_article: string;
+  prix: number;
+  quantite_stock: number;
   image: File[];
-  // description: string;
-  // small_description: string;
-  // etat: string;
-  // marque: string;
-  // new_nbr_days: number;
-  // id_fournisseur: string;
-  // id_sousCategorie: string;
-  // caracteristique: nameValue[];
-  // Serial: string[];
+  description: string;
+  small_description: string;
+  etat: string;
+  marque: string;
 }
 
 export interface ProductGet {
@@ -107,5 +97,23 @@ export interface ProductGet {
   small_description: string;
   etat: string;
   marque: string;
+  id_souscategorie: string;
+}
+
+export interface ProductGetData {
+  id_article?: string;
+  reference: string;
+  name_article: string;
+  prix: number;
+  quantite_stock: number;
+  image: string[];
+  description: string;
+  small_description: string;
+  etat: string;
+  marque: string;
+  sous_categories: sous_categoriesArray[];
+}
+
+export interface sous_categoriesArray {
   id_souscategorie: string;
 }
