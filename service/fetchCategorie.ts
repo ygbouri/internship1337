@@ -3,6 +3,7 @@ import {
   Marques,
   Product,
   ProductEndPoint,
+  ProductGet,
   SousCategorie,
   SousCategoriePost,
   allCategorieDto,
@@ -30,7 +31,25 @@ export const allSousCategorie = (id_categorie: string) => {
     if (allSousCategorie) return allSousCategorie;
   } catch (error) {}
 };
+export const getProduct = async (id_article: string) => {
+  try {
+    const product = await useAxios<ProductGet>(
+      "get",
+      ProductEndPoint.ProductPost + `/?id_article=${id_article}`
+    );
+    if (product) return product;
+  } catch (error) {}
+};
 
+export const getProductSimiliarProduct = async (id_article: string) => {
+  try {
+    const product = await useAxios<ProductGet>(
+      "get",
+      ProductEndPoint.ProductPost + `/?id_article=${id_article}`
+    );
+    if (product) return product;
+  } catch (error) {}
+};
 export const getAllProductsofSousGa = async (id_sousCategorie: string) => {
   try {
     const allProducts = await useAxios<SousCategorie>(
@@ -73,13 +92,6 @@ export const postSousCategorie = async (data: SousCategoriePost) => {
       CategorieEndPoint.PostSousCategorie,
       data
     );
-    // const response =  axios("http://localhost:5000/", {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify(data),
-    // });
     if (response) return response;
   } catch (error) {}
 };

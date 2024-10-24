@@ -6,7 +6,7 @@ export const CategorieEndPoint = {
 };
 
 export const aritclesEndPoint = {
-  Marques: "articles/allMarquesOfArticles",
+  Product: "/articles/",
   // SubCategoryProduct: "s/",
 };
 

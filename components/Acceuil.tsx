@@ -198,24 +198,7 @@ export default function Acceuil() {
             className={`w-full flex items-start  rounded-tl-md rounded-tr-md flex-col gap-5 justify-around ${
               isDarkMode ? " bg-white" : " bg-[#1A1C1E]"
             }`}
-          >
-            {/* <RadioGroupDemo
-              cara={Caracteristiques}
-              isSelected={SelectedItem}
-              onSelect={(item: caraSousCateRequired) => {
-                setSelectedItem(item);
-                handleSelectCara(item);
-              }}
-            ></RadioGroupDemo> */}
-            {/* <CheckboxDemoCara
-              cara={Cara}
-              isSelected={SelectedItem}
-              onSelect={(item: caraSousCateRequired) => {
-                setSelectedItem(item);
-                handleSelectCara(item);
-              }}
-            ></CheckboxDemoCara> */}
-          </div>
+          ></div>
         </div>
 
         <div className="w-[100%]  md:h-full sm:min-h-full   min-sm:flex-col sm:grid max-sm:space-y-6  max-sm:grid-cols-1 sm:grid-cols-2 md:grid-cols-2 2xl:grid-cols-4  sm:gap-6 rounded-md  bg-transparent">
@@ -233,7 +216,7 @@ export default function Acceuil() {
                     href={`/product/${item.id_article}`}
                   >
                     <Image
-                      src={`/${item.image[0]}`}
+                      src={`/uploads/${item.image[0]}`}
                       alt={`image of product name's ${item.name_article}`}
                       width={500}
                       height={500}
@@ -250,7 +233,7 @@ export default function Acceuil() {
                 </div>
 
                 <div
-                  className={`w-[40px] top-6   group-hover:opacity-100 group-hover:transition-opacity opacity-0 duration-300 gap-2 right-8 h-[100px] bg-transparent flex flex-col absolute`}
+                  className={`w-[40px] top-8   group-hover:opacity-100 group-hover:transition-opacity opacity-0 duration-300 gap-2 right-8 h-[100px] bg-transparent flex flex-col absolute`}
                 >
                   <button className="bg-[#f1aeb5] rounded-lg w-[90%] h-6 flex justify-center items-center">
                     <AiOutlineHeart style={{ color: "#dc3545" }} />
@@ -268,7 +251,7 @@ export default function Acceuil() {
                       <h3 className={`w-[50%]  ${color} text-sm font-bold`}>
                         {item.name_article}
                       </h3>
-                      <div className="w-[50%] flex items-center justify-end">
+                      {/* <div className="w-[50%] flex items-center justify-end">
                         <label
                           htmlFor=""
                           className="text-xs text-right font-bold text-[#F5B849]"
@@ -279,11 +262,11 @@ export default function Acceuil() {
                           className=" h-3"
                           style={{ color: "#F5B849" }}
                         />
-                      </div>
+                      </div> */}
                     </div>
                     <div className="w-[80%] flex ">
                       <h5 className="text-xs text-[#BBBCC1]">
-                        fjdklsfjdklsfjdklsj
+                        {item.description}
                       </h5>
                     </div>
                   </div>
@@ -305,13 +288,8 @@ export default function Acceuil() {
                     </div>
                     {item.prix != 0 ? (
                       <div className="w-[80%] max-sm:mb-5 flex justify-start  items-center">
-                        <img
-                          src="/product/discount.svg"
-                          alt=""
-                          className="h-3"
-                        />
                         <h5 className="text-[#26BF94] text-xxs font-bold">
-                          Offer Price $599
+                          {item.small_description}
                         </h5>
                       </div>
                     ) : (

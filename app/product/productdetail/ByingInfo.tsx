@@ -4,7 +4,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { BiSolidOffer } from "react-icons/bi";
 
-const ByingInfo = () => {
+const ByingInfo = ({ product }: any) => {
   const [showOffers, setOffers] = useState(false);
   const { isDarkMode } = useDarkMode();
   let color: string = isDarkMode ? " text-black" : "text-[#BBBBBC] ";

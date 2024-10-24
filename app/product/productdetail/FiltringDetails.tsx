@@ -8,7 +8,7 @@ import { GiCardPickup } from "react-icons/gi";
 import { AvatarDemo } from "@/components/myCustomComponents/avatar";
 import { BiDislike, BiLike } from "react-icons/bi";
 import { useDarkMode } from "@/context/darkmode";
-const FiltringDetails = () => {
+const FiltringDetails = ({ product }: any) => {
   const { isDarkMode } = useDarkMode();
   const arrr: string[] = ["GPS", "GPS+Cellular"];
   console.log(arrr);

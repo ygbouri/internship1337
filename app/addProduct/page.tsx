@@ -26,7 +26,6 @@ import { nameValue } from "@/types";
 import { Input } from "@/components/ui/input";
 import {
   allCategorie,
-  // allMarqueOfProduct,
   allSousCategorie,
   postProductD,
 } from "@/service/fetchCategorie";
@@ -148,13 +147,14 @@ export default function AddProduct() {
       formData.append("prix", sellingPrice.toString());
       formData.append("quantite_stock", qteStock.toString()),
         images.forEach((item: File) => {
-          formData.append("image", item);
+          formData.append("file", item);
         });
       formData.append("description", textD),
         formData.append("small_description", text),
         formData.append("etat", etatProduct),
         formData.append("marque", brandItem),
-        mutate.mutate(formData);
+        formData.append("id_souscategorie", sousCategorie);
+      mutate.mutate(formData);
     } else {
       console.log("ko");
     }

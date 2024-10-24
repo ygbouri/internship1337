@@ -11,6 +11,7 @@ import "swiper/css/thumbs";
 
 import { Autoplay, FreeMode, Navigation, Thumbs } from "swiper/modules";
 import { useDarkMode } from "@/context/darkmode";
+import { ProductGet } from "@/types/Api";
 
 const images = [
   "/swatch.png",
@@ -19,15 +20,14 @@ const images = [
   "/swatchwhite.png",
 ];
 
-const CustomSwiper = () => {
+const CustomSwiper = ({ product }: any) => {
   const [thumbsSwiper, setThumbsSwiper] = useState<any>(null);
   const { isDarkMode } = useDarkMode();
   let [isActive, setisActive] = useState(0);
-  let [indexe, setisIndexe] = useState(0);
-
+  const productData = product as ProductGet;
+  console.log("swiper===>", productData?.description);
   useEffect(() => {
-    if (isActive > images.length - 1) setisActive(0);
-    // console.log(isActive);
+    if (isActive > productData?.image.length - 1) setisActive(0);
   }, [isActive]);
 
   const myObject = { "--swiper-navigation-size": "16px" } as {
@@ -50,28 +50,17 @@ const CustomSwiper = () => {
         className={`mySwiper2  xl:h-[80%]  max-xl:w-[90%] max-sm:w-full h-[80%]  max-sm:aspect-1   rounded-2xl ${
           isDarkMode ? " bg-[#F3F6F8]" : " bg-[#2B2E31]"
         }`}
-        // onAutoplay={() => {
-        //   setisActive((prev) => prev + 1);
-        // }}
-        // onSliderMove={() => {
-        //   setisActive((prev) => prev + 1);
-        // }}
-        onSlideChange={
-          (swiper) => {
-            setisActive(swiper.realIndex);
-          }
-          // onSlideChange={() => {
-          //   setisActive((prev) => prev + 1);
-          // }
-        }
+        onSlideChange={(swiper) => {
+          setisActive(swiper.realIndex);
+        }}
       >
-        {images.map((item, indexe) => (
+        {productData?.image.map((item: string, indexe: number) => (
           <SwiperSlide
             className="justify-center relative flex  w-[60%] items-center "
             key={item}
           >
             <img
-              src={item}
+              src={`/uploads/${item}`}
               className=" absolute left-[50%] top-[50%] h-[90%]   -translate-x-[50%] translate-y-[-50%] object-contain"
             />
           </SwiperSlide>
@@ -87,14 +76,17 @@ const CustomSwiper = () => {
         modules={[FreeMode, Navigation, Thumbs]}
         className="mySwiper max-xl:h-[30%]   mt-4 flex justify-around items-center"
       >
-        {images.map((item, indexe) => (
+        {productData?.image.map((item: string, indexe: number) => (
           <SwiperSlide
             key={item}
             className={` ${
               isActive === indexe ? "opacity-100" : "opacity-50"
             }   `}
           >
-            <img src={item} className="w-full h-24 object-cover" />
+            <img
+              src={`/uploads/${item}`}
+              className="w-full h-24 object-cover"
+            />
           </SwiperSlide>
         ))}
       </Swiper>

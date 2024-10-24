@@ -2,8 +2,9 @@ import React from "react";
 import PreviewAndSimilarProduct from "./PreviewAndSimilarProduct";
 import Details from "./Details";
 import { useDarkMode } from "@/context/darkmode";
+import { ProductGet } from "@/types/Api";
 
-function ProcuctDetails() {
+function ProcuctDetails({ product }: any) {
   const { isDarkMode } = useDarkMode();
   let color: string = isDarkMode ? " text-black" : "text-[#BBBBBC] ";
 
@@ -20,8 +21,8 @@ function ProcuctDetails() {
           isDarkMode ? " bg-white" : " bg-[#1A1C1E]"
         } flex-col gap-2  xxl:flex-row`}
       >
-        <PreviewAndSimilarProduct />
-        <Details />
+        <PreviewAndSimilarProduct product={product} />
+        <Details product={product} />
       </div>
     </div>
   );

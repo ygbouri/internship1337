@@ -1,5 +1,8 @@
+"use client";
 import { useDarkMode } from "@/context/darkmode";
-import React from "react";
+import { getAllProductsofSousGa } from "@/service/fetchCategorie";
+import { ProductGet } from "@/types/Api";
+import React, { useEffect, useState } from "react";
 import { AiFillStar } from "react-icons/ai";
 
 const Arr = [
@@ -69,9 +72,24 @@ const Arr = [
   },
 ];
 
-function SimilarProduct() {
+function SimilarProduct({ product }: any) {
   const { isDarkMode } = useDarkMode();
-
+  const [semiliarProduct, setSemiliar] = useState<ProductGet[]>([]);
+  const productData = product as ProductGet;
+  console.log(productData);
+  useEffect(() => {
+    console.log(
+      "kldsjfkljfkldajfklasjklsjkljfdkls============> " +
+        productData?.id_souscategorie
+    );
+    if (productData?.id_souscategorie) {
+      const getSemiliarProduct = async () => {
+        const data = await getAllProductsofSousGa(productData.id_souscategorie);
+        if (data) setSemiliar(data);
+      };
+      getSemiliarProduct();
+    }
+  }, [productData?.id_souscategorie]);
   let color: string = isDarkMode ? " text-black" : "text-[#BBBBBC] ";
 
   return (
@@ -84,34 +102,24 @@ function SimilarProduct() {
           isDarkMode ? "border-gray-100" : "border-gray-500"
         } `}
       >
-        {Arr.map((item, index) => (
+        {semiliarProduct?.map((item, index) => (
           <div key={index} className="flex p-2 justify-between ">
             <div className="flex gap-4">
               <img
-                src={item.image}
+                src={`/uploads/${item.image[0]}`}
                 alt=""
                 className={`h-12 ${
                   isDarkMode ? " bg-[#F3F6F8]" : " bg-[#2B2E31]"
                 } rounded-md`}
               />
               <div className="">
-                <h3 className={`${color} font-semibold`}>{item.title}</h3>
-                <div className="flex gap-2">
-                  <p className="flex my-auto h-fit rounded-md bg-[#25BF94]  py-[2px] text-[10px] text-white font-bold">
-                    {item.review}
-                    <AiFillStar className=" h-3" style={{ color: "white" }} />
-                  </p>
-                  <span className="text-gray-400 font-bold text-sm">
-                    ({item.reviewers.toLocaleString("en-US")})
-                  </span>
-                </div>
+                <h3 className={`${color} font-semibold`}>
+                  {item.name_article}
+                </h3>
               </div>
             </div>
             <div className="flex flex-col items-end">
-              <span className={`font-medium ${color}`}>{item.price}</span>
-              <span className="text-[12px] text-gray-400 line-through font-bold text-sm">
-                ${item.oldPrice.toLocaleString("en-US")}
-              </span>
+              <span className={`font-medium ${color}`}>{item.prix}</span>
             </div>
           </div>
         ))}
