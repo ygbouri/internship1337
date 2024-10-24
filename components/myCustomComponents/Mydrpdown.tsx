@@ -265,9 +265,7 @@ export function DropdownProfile(props: { imageUrl: string | undefined }) {
     }
   }, []);
   const handleProfile = () => {
-    // console.log("signup");
     const pathBeforSignin: string = window.location.pathname;
-    console.log("path befor signin", pathBeforSignin);
     localStorage.setItem("pathBeforSigin", pathBeforSignin);
     if (!isLog) window.location.href = "/signin";
   };

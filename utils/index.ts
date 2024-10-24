@@ -16,13 +16,13 @@ const axiosInstancetoPost = axios.create({
   baseURL: "http://localhost:3000/api", // Define your base URL here
   // timeout: 5000, // Set timeout duration
   headers: {
-    "Content-Type": "multipart/form-data", // Define common headers here
+    "Content-Type": "application/json", // Define common headers here
   },
   withCredentials: true,
 });
 
 const axiosInstancetoPostProduct = axios.create({
-  baseURL: "http://localhost:5000/", // Define your base URL here
+  baseURL: "http://localhost:3000/api", // Define your base URL here
   // timeout: 5000, // Set timeout duration
   headers: {
     "Content-Type": "multipart/form-data", // Define common headers here
@@ -64,8 +64,6 @@ export const useAxiosPostProduct = async <T>(
   data: Record<any, any>
 ): Promise<T> => {
   try {
-    console.log(method, endpoint, data);
-    console.log("only iMage", data.image);
     const response = await axiosInstancetoPostProduct({
       method,
       url: endpoint,

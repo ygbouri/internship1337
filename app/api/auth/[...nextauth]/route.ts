@@ -25,7 +25,11 @@ const options: NextAuthOptions = {
   callbacks: {
     async jwt({ token, account, user, profile }) {
       if (account && profile) {
-        const { login, email, displayname } = profile;
+        const { login, email, displayname } = profile as {
+          login: string;
+          email: string;
+          displayname: string;
+        };
         if (account.provider === "42-school") {
           const existUser = await prisma.user.findUnique({
             where: {
@@ -47,8 +51,12 @@ const options: NextAuthOptions = {
             });
             if (newUser) {
               token.email = newUser.email;
+              token.role = newUser.role;
             }
-          } else token.email = existUser.email;
+          } else {
+            token.email = existUser.email;
+            token.role = existUser.role;
+          }
         }
       }
       return token;

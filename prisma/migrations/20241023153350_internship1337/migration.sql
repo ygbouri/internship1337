@@ -27,19 +27,11 @@ CREATE TABLE "article" (
     "name_article" TEXT NOT NULL,
     "prix" DOUBLE PRECISION NOT NULL,
     "quantite_stock" INTEGER NOT NULL,
-    "quantite_minimal" INTEGER DEFAULT 0,
-    "prix_TVA" DOUBLE PRECISION NOT NULL,
-    "prix_achat" DOUBLE PRECISION NOT NULL,
-    "prix_remise" DOUBLE PRECISION NOT NULL DEFAULT 0.0,
     "image" TEXT[],
     "description" TEXT NOT NULL,
     "small_description" TEXT NOT NULL,
     "etat" "etat_article" NOT NULL,
     "marque" TEXT NOT NULL,
-    "new_nbr_days" INTEGER NOT NULL,
-    "OrdreAffichage" INTEGER DEFAULT 0,
-    "lot" TEXT DEFAULT '',
-    "id_fournisseur" TEXT NOT NULL,
 
     CONSTRAINT "article_pkey" PRIMARY KEY ("id_article")
 );

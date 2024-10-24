@@ -27,13 +27,13 @@ export default function RootLayout({ children, session }: Props) {
 
   return (
     <DarkModeProvider>
-      <SessionProvider session={session}>
-        <UserProvider>
-          <QueryClientProvider client={client}>
+      <QueryClientProvider client={client}>
+        <SessionProvider session={session}>
+          <UserProvider>
             <LayoutContent>{children}</LayoutContent>
-          </QueryClientProvider>
-        </UserProvider>
-      </SessionProvider>
+          </UserProvider>
+        </SessionProvider>
+      </QueryClientProvider>
     </DarkModeProvider>
   );
 }

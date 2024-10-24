@@ -1,32 +1,43 @@
 import prisma from "@/lib/instancePrisma";
-import { postCategorieSchema } from "@/lib/schemaValidator";
+import { postSousCategorieSchema } from "@/lib/schemaValidator";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
-  const allCategoie = await prisma.categorie.findMany({
-    include: {
-      sous_categories: true,
-    },
-  });
-  if (allCategoie.length > 0)
-    return NextResponse.json({
-      data: allCategoie,
-      message: "Category retrieval successful",
+  const url = new URL(req.url);
+  const idCategorie = url.searchParams.get("idCategorie");
+
+  if (idCategorie) {
+    const sousCategorie = await prisma.sous_categorie.findMany({
+      where: {
+        id_categorie: idCategorie,
+      },
+      include: {
+        articles: true,
+      },
     });
-  else
+    if (sousCategorie)
+      return NextResponse.json({
+        data: sousCategorie,
+        message: "Subcategory retrieval successful",
+      });
     return NextResponse.json(
-      { data: null, message: "No category found" },
+      { data: null, message: "No subcategory found" },
       { status: 200 }
     );
+  }
+  return NextResponse.json(
+    { data: null, message: "something is wrong" },
+    { status: 400 }
+  );
 }
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const validateData = await postCategorieSchema.validate(body, {
+    const validateData = await postSousCategorieSchema.validate(body, {
       abortEarly: false,
     });
-    const cat = await prisma.categorie.findUnique({
+    const cat = await prisma.sous_categorie.findUnique({
       where: {
         name: validateData.name,
       },
@@ -36,10 +47,11 @@ export async function POST(req: NextRequest) {
         data: cat,
         message: "this category is exist",
       });
-    const postData = await prisma.categorie.create({
+    const postData = await prisma.sous_categorie.create({
       data: {
         name: validateData.name,
         description: validateData.description,
+        id_categorie: validateData.id_categorie,
       },
     });
     if (postData)
@@ -53,10 +65,10 @@ export async function POST(req: NextRequest) {
     );
   } catch (error: any) {
     if (error.name === "ValidationError") {
-      console.error("Validation Errors:", error.errors); // Log validation errors
+      console.error("Validation Errors:", error.errors);
       return NextResponse.json(
         { data: null, message: "Validation failed", errors: error.errors },
-        { status: 400 } // Send a 400 error for validation issues
+        { status: 400 }
       );
     }
     return NextResponse.json(

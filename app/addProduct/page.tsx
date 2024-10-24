@@ -1,18 +1,10 @@
 "use client";
 import { useDarkMode } from "@/context/darkmode";
 import React, { useEffect, useState } from "react";
-import {
-  allCategorie,
-  allFournisseur,
-  allMarqueOfProduct,
-  allSousCategorie,
-  caracteristiqueOfSousCategorie,
-  postProductD,
-} from "@/requests/categorie";
+
 import {
   SelectDemo,
   SelectDemoCategorie,
-  SelectDemoFournisseur,
   SelectDemoSousCategorie,
   SelectEtatProduct,
 } from "@/components/myCustomComponents/select";
@@ -20,44 +12,38 @@ import {
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Item } from "@radix-ui/react-dropdown-menu";
-import { Product, SousCategorie, caraSousCate } from "@/types/Api";
-import { CgAddR } from "react-icons/cg";
+
 import { BsPlusLg } from "react-icons/bs";
 import {
   DialogBrand,
   DialogCategorie,
-  DialogEditNameCaracteristique,
-  DialogFournisseur,
-  DialogSerial,
   DialogSousCategorie,
 } from "@/components/myCustomComponents/Dialog";
 import ImageUploader from "@/components/Uploaderfile";
-import addCaracteristique from "@/components/addCaracteristique";
+
 import { Button } from "@/components/ui/button";
-import AddCaracteristique from "@/components/addCaracteristique";
 import { nameValue } from "@/types";
 import { Input } from "@/components/ui/input";
-
-// import { SelectEtatProduct } from "@/components/myCustomComponents/select";
-// import load from 'lodash'
+import {
+  allCategorie,
+  // allMarqueOfProduct,
+  allSousCategorie,
+  postProductD,
+} from "@/service/fetchCategorie";
 
 export default function AddProduct() {
   const { isDarkMode, handleDarkModeToggle } = useDarkMode();
   const [qteStock, setQteStock] = useState<number>(0);
-  const [qteMin, setQteMin] = useState<number>(0);
-  const [nbDayNew, setNbDayNew] = useState<number>(0);
+
   const [brandItem, setBrand] = useState("");
   const [idCategorie, setIdCategorie] = useState("");
-  const [idFournisseur, setIdFournisseur] = useState("");
+
   const [name, setName] = useState("");
   const [reference, setReference] = useState("");
   const [etatProduct, setEtatProduct] = useState("");
   const [purchacePrice, setPurchasePrice] = useState<number>(0.0);
   const [sellingPrice, setSellingPrice] = useState<number>(0.0);
-  const [tvaPrice, setTvaPrice] = useState<number>(0.0);
-  // const [hide, setHide] = useState(false);
-  // const [hideS, setHideS] = useState(false);
+
   const [sousCategorie, setSousCategorie] = useState("");
   const [text, setText] = useState("");
   const [textD, setDText] = useState("");
@@ -66,19 +52,10 @@ export default function AddProduct() {
   const [branTab, setBranTab] = useState<string[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenS, setIsOpenS] = useState(false);
-  const [isOpenQ, setIsOpenQ] = useState(false);
-  const [isOpenF, setIsOpenF] = useState(false);
+
   const [isOpenB, setIsOpenB] = useState(false);
   const [refetchCategorie, SetRefetchCategorie] = useState(false);
   const [refetchSousCategorie, SetRefetchSousCategorie] = useState(false);
-  const [refetchSupplier, SetRefetchSupplier] = useState(false);
-  const [openE, setOpenE] = useState<boolean>(false);
-
-  const [SousCategoriesArray, setSousCategorieArray] =
-    useState<SousCategorie[]>();
-  const [serials, setSerials] = useState<string[]>([]);
-  const [cara, setCara] = useState<nameValue[]>([]);
-  const [caraPushed, setCaraPushed] = useState<nameValue[]>([]);
   const [images, setImages] = useState<File[]>([]);
 
   const queryClient = useQueryClient();
@@ -92,8 +69,6 @@ export default function AddProduct() {
       });
     },
   });
-  // if (idCategorie) {
-  // console.log(mutate.data);
 
   const { data: SousCategories } = useQuery({
     queryKey: ["SousCategorie", idCategorie],
@@ -103,95 +78,15 @@ export default function AddProduct() {
     enabled: idCategorie != "" || refetchSousCategorie == true,
   });
 
-  // }
-  // if (SousCategories == undefined)
-  //     SousCategories
-  // console.log("add product");
-  // console.log(images);
-  // let cara: caraSousCate[] = [];
-
-  const { data: CaracteristiquesSousCategorie } = useQuery({
-    queryKey: ["CaracteristiquesSousCategorie", sousCategorie],
-    queryFn: () => {
-      return caracteristiqueOfSousCategorie(sousCategorie);
-    },
-    enabled: sousCategorie != "",
-    refetchOnWindowFocus: false,
-  });
-
-  useEffect(() => {
-    const data: nameValue[] = CaracteristiquesSousCategorie
-      ? CaracteristiquesSousCategorie?.map((item) => {
-          return { name: item.name, value: item.value };
-        })
-      : [];
-    if (CaracteristiquesSousCategorie) {
-      setCara(data);
-      setCaraPushed(data);
-      console.log("carac ", cara);
-    }
-    // console.log(
-    //   cara.length + " oldtable=> " + CaracteristiquesSousCategorie?.length
-    // );
-  }, [CaracteristiquesSousCategorie]);
-  const handleCaracteristique = (name: string, value: string) => {
-    if (!cara.includes({ name: name, value: value }, 0)) {
-      // if (value != "") cara.push({ name, value });
-      if (value != "") {
-        const dataPushed = caraPushed.filter((item) => item.name !== name);
-        dataPushed.push({ name, value });
-        setCaraPushed(dataPushed);
-        const findObject = cara.find(
-          (item) => item.name === name && item.value == value
-        );
-        if (!findObject) {
-          setCara([...cara, { name, value }]);
-        }
-      }
-    }
-  };
-
-  const handleEditCaracteristique = (
-    oldname: string,
-    newName: string,
-    index: number
-  ) => {
-    // if (cara.includes({ name: oldname, value: value }, 0)) {
-    //   // let obj :caraSousCate = cara.find({name,value},0)
-    //   let index: number = cara.indexOf({ name: oldname,value:value});
-    //   cara[index] = { name: newName, value: value };
-    // }
-    if (index == 0) {
-      cara.forEach((item: caraSousCate) => {
-        if (oldname === item.name) item.name = newName;
-      });
-    } else if (index == 1) {
-      setCara(cara.filter((item: caraSousCate) => item.name != oldname)); // deletecaracteristique
-    }
-  };
-  // try to use caracteristiqueOfSousCategorie and pass it as a props to addCaracteristique
   useEffect(() => {
     SetRefetchCategorie(true);
-    SetRefetchSupplier(true);
-  }, []);
+  }, [refetchCategorie]);
   const arrEtatProduct: string[] = ["New", "Used"];
-  let tabNoSelectedData: string[] = ["-1-1", "No SubCategorie is Selected"];
-  //========>useQuery
+
   const { data: Categorie } = useQuery({
     queryKey: ["allCategorie"],
     queryFn: allCategorie,
     enabled: refetchCategorie,
-  });
-
-  const { data: marques } = useQuery({
-    queryKey: ["allMarques"],
-    queryFn: allMarqueOfProduct,
-  });
-
-  const { data: Fournisseurs } = useQuery({
-    queryKey: ["allFournisseur"],
-    queryFn: allFournisseur,
-    enabled: refetchSupplier,
   });
 
   const handleSCategorie = (even: any) => {
@@ -200,9 +95,6 @@ export default function AddProduct() {
     setLengthSDesc(200 - str.length);
   };
 
-  const handleIdFournisseur = (item: string) => {
-    setIdFournisseur(item);
-  };
   const handleCategorie = (even: any) => {
     const tab: string = even.target.value;
     setDText(tab);
@@ -219,14 +111,8 @@ export default function AddProduct() {
   const handleSelectEtatProduct = (item: string) =>
     setEtatProduct(item.toLocaleUpperCase());
 
-  let brand: string[] = marques ? marques.map((item) => item.marque) : [];
-  useEffect(() => {
-    setBranTab(brand);
-  }, [marques]);
   const handleBrand = (item: string) => {
-    // setBrand(item);
-    // setBranTab(brand);
-    const checkItem = branTab.includes(item); /// i check why if a chose an brand setBrand(item) set another value
+    const checkItem = branTab.includes(item);
     if (!checkItem) branTab.push(item);
   };
 
@@ -237,24 +123,16 @@ export default function AddProduct() {
   const checkData = (): boolean => {
     if (
       sousCategorie != "" &&
-      nbDayNew >= 0 &&
       text != "" &&
       textD != "" &&
       brandItem != "" &&
       qteStock != 0 &&
-      qteMin != 0 &&
-      serials.length === qteStock &&
-      caraPushed.length > 0 &&
       images.length > 0 &&
-      idFournisseur != "" &&
       etatProduct != "" &&
-      purchacePrice != 0.0 &&
       sellingPrice != 0.0 &&
-      tvaPrice != 0.0 &&
       name != " " &&
       reference != ""
     ) {
-      if (serials.includes("", 0)) return false;
       return true;
     }
     return false;
@@ -269,9 +147,6 @@ export default function AddProduct() {
       formData.append("name_article", name);
       formData.append("prix", sellingPrice.toString());
       formData.append("quantite_stock", qteStock.toString()),
-        formData.append("quantite_minimal", qteMin.toString()),
-        formData.append("prix_TVA", tvaPrice.toString()),
-        formData.append("prix_achat", sellingPrice.toString()),
         images.forEach((item: File) => {
           formData.append("image", item);
         });
@@ -279,36 +154,12 @@ export default function AddProduct() {
         formData.append("small_description", text),
         formData.append("etat", etatProduct),
         formData.append("marque", brandItem),
-        formData.append("new_nbr_days", nbDayNew.toString()),
-        formData.append("id_fournisseur", idFournisseur),
-        formData.append("id_sousCategorie", sousCategorie),
-        caraPushed.forEach((item: nameValue) => {
-          formData.append("caracteristique", JSON.stringify(item));
-        });
-      serials.forEach((item: string) => {
-        formData.append("Serial", item);
-      });
-      mutate.mutate(formData);
-      console.log("ok");
-      console.log(caraPushed);
+        mutate.mutate(formData);
     } else {
       console.log("ko");
-      console.log(serials);
     }
   };
 
-  const handleSerialInput = (index: number, data: string) => {
-    setSerials((prevStrings) => {
-      const updatedStrings = [...prevStrings];
-      updatedStrings[index] = data;
-      return updatedStrings;
-    });
-  };
-  useEffect(() => {
-    console.log(refetchCategorie);
-    // console.log("kharya",Categorie)
-  }, [Categorie?.length]);
-  const colorIC = isDarkMode ? "black" : "#6B7280";
   return (
     <div className={`flex flex-col gap-8 h-auto w-full sm:py-4 sm:px-4  `}>
       <div className={`sm:gap-4 `}>
@@ -376,90 +227,6 @@ export default function AddProduct() {
             >
               *Reference should be unique
             </label>
-          </div>
-          <div className={`flex max-xl:flex-col gap-2`}>
-            <div className="w-[50%] max-xl:w-full flex flex-col gap-2">
-              <label
-                className={`w-auto font-semibold text-sm ${
-                  isDarkMode ? "text-black" : "text-[#BBBBBC]"
-                }`}
-              >
-                Quantity In Stock *
-              </label>
-              <div className="flex gap-1">
-                <Input
-                  type="number"
-                  style={{ outline: "none" }}
-                  value={qteStock}
-                  step={"1"}
-                  min={"0"}
-                  className={`w-[95%] border ${
-                    isDarkMode ? "border-gray-100" : "border-gray-500"
-                  } ${
-                    isDarkMode ? "text-black" : "text-[#BBBBBC]"
-                  } rounded-md px-2 py-2 font-medium text-xs  ${
-                    isDarkMode ? "bg-white" : "bg-[#1A1C1E]"
-                  }`}
-                  placeholder="Number of Quantity in Stock (Max value should be enter is 3000)"
-                  onChange={(e: any) =>
-                    e.target.value > 0 && e.target.value < 3000
-                      ? setQteStock(Number.parseInt(e.target.value, 10))
-                      : setQteStock(0)
-                  }
-                />
-                {/* <Button
-                  variant={"outline"}
-                  className="px-3"
-                  onClick={() => {
-                    setIsOpenQ(!isOpenQ);
-                  }}
-                >
-                  <BsPlusLg
-                    strokeWidth={0.6}
-                    className="size-4 text-zinc-600"
-                  ></BsPlusLg>
-                </Button>
-                {isOpenQ && (
-                  <DialogSerial
-                    title={"Add Serials"}
-                    isOpen={isOpenQ}
-                    qteStock={qteStock}
-                    setQteStock={setQteStock}
-                    addSerials={AddSerials}
-                    // isDarkMode={isDarkMode}
-                    setIsopen={setIsOpenQ}
-                    // dataProp={idCategorie}
-                  />
-                )} */}
-              </div>
-            </div>
-            <div className="w-[50%] max-xl:w-full flex flex-col gap-2">
-              <label
-                className={`w-auto font-semibold text-sm ${
-                  isDarkMode ? "text-black" : "text-[#BBBBBC]"
-                }`}
-              >
-                Minimum Quantity *
-              </label>
-              <Input
-                type="number"
-                style={{ outline: "none" }}
-                value={qteMin}
-                className={` border ${
-                  isDarkMode ? "border-gray-100" : "border-gray-500"
-                } ${
-                  isDarkMode ? "text-black" : "text-[#BBBBBC]"
-                } rounded-md px-2 py-2 font-medium text-xs ${
-                  isDarkMode ? "bg-white" : "bg-[#1A1C1E]"
-                }`}
-                placeholder="Number of Minimum Quantity"
-                onChange={(e: any) =>
-                  e.target.value > 0
-                    ? setQteMin(Number.parseInt(e.target.value, 10))
-                    : setQteMin(0)
-                }
-              />
-            </div>
           </div>
 
           <div className={`flex max-xl:flex-col gap-2`}>
@@ -539,17 +306,6 @@ export default function AddProduct() {
                   title={"Chose SousCategorie"}
                   onSelect={handleSousCategorie}
                 ></SelectDemoSousCategorie>
-                {/* <div > */}
-                {/* <button
-                  className="w-[50px] h-[35px]  flex justify-center items-center"
-                  onClick={() => {
-                    setIsOpenS(!isOpenS);
-                  }}
-                >
-                  <CgAddR
-                    style={{ width: "100%", height: "100%", color: colorIC }}
-                  ></CgAddR>
-                </button> */}
 
                 <Button
                   variant={"outline"}
@@ -563,7 +319,6 @@ export default function AddProduct() {
                     className="size-4 text-zinc-600"
                   ></BsPlusLg>
                 </Button>
-                {/* </div> */}
                 {isOpenS && (
                   <DialogSousCategorie
                     title={"Add SousCategorie"}
@@ -571,9 +326,6 @@ export default function AddProduct() {
                     isDarkMode={isDarkMode}
                     setIsopen={setIsOpenS}
                     dataProp={idCategorie}
-                    // onRefetchSousCategories={() => { queryClient.invalidateQueries({
-                    //   queryKey: ["SousCategorie"],
-                    // }); console.log('onRefetchCategories')}}
                     SetRefetchSousCategorie={SetRefetchSousCategorie}
                   />
                 )}
@@ -636,95 +388,18 @@ export default function AddProduct() {
                     className="size-4 text-zinc-600"
                   ></BsPlusLg>
                 </Button>
-                {/* </div> */}
                 {isOpenB && (
                   <DialogBrand
                     title={"Brand"}
                     isOpen={isOpenB}
                     setIsopen={setIsOpenB}
                     newBrand={handleBrand}
-                    // tab={newArr}
                   ></DialogBrand>
                 )}
               </div>
             </div>
           </div>
-          <div className={`flex  gap-2`}>
-            <div className="w-[50%] flex flex-col gap-2">
-              <label
-                className={`w-auto font-semibold text-sm ${
-                  isDarkMode ? "text-black" : "text-[#BBBBBC]"
-                }`}
-              >
-                Product Supplier *
-              </label>
-              <div className=" flex gap-1 h-auto">
-                <SelectDemoFournisseur
-                  className={` w-full h-auto border ${
-                    isDarkMode ? "border-gray-100" : "border-gray-500"
-                  } ${
-                    isDarkMode ? "text-black" : "text-[#BBBBBC]"
-                  } rounded-md px-2 py-2 font-medium text-xs ${
-                    isDarkMode ? "bg-white" : "bg-[#1A1C1E]"
-                  }`}
-                  arr={Fournisseurs}
-                  title={"Product Supplier"}
-                  onSelect={handleIdFournisseur}
-                ></SelectDemoFournisseur>
 
-                <Button
-                  variant={"outline"}
-                  className={`px-3 `}
-                  onClick={() => {
-                    setIsOpenF(!isOpenF);
-                  }}
-                >
-                  <BsPlusLg
-                    strokeWidth={0.6}
-                    className="size-4 text-zinc-600"
-                  ></BsPlusLg>
-                </Button>
-                {isOpenF && (
-                  <DialogFournisseur
-                    title={"Add Fournisseur"}
-                    isOpen={isOpenF}
-                    setIsopen={setIsOpenF}
-                    // onRefetchFournisseur={() => { queryClient.invalidateQueries({
-                    //   queryKey: ["allFournisseur"],
-                    // }); console.log('onRefetchCategories')}}
-                    SetRefetchSupplier={SetRefetchSupplier}
-                  />
-                )}
-              </div>
-            </div>
-            <div className="w-[50%] flex flex-col gap-2">
-              <label
-                className={`w-auto font-semibold text-sm ${
-                  isDarkMode ? "text-black" : "text-[#BBBBBC]"
-                }`}
-              >
-                Product number of days as new *
-              </label>
-              <Input
-                type="number"
-                style={{ outline: "none" }}
-                value={nbDayNew}
-                className={` border ${
-                  isDarkMode ? "border-gray-100" : "border-gray-500"
-                } ${
-                  isDarkMode ? "text-black" : "text-[#BBBBBC]"
-                } rounded-md px-2 py-2 font-medium text-xs ${
-                  isDarkMode ? "bg-white" : "bg-[#1A1C1E]"
-                }`}
-                placeholder="Number of Minimum Quantity"
-                onChange={(e: any) =>
-                  e.target.value > 0
-                    ? setNbDayNew(Number(e.target.value))
-                    : setNbDayNew(0)
-                }
-              />
-            </div>
-          </div>
           <div className="w-[100%] flex flex-col gap-2">
             <label
               className={`w-auto font-semibold text-sm ${
@@ -777,38 +452,68 @@ export default function AddProduct() {
           </div>
         </div>
 
-        {/* rightside *********************************** */}
         <div
           className={`w-[50%] max-xl:w-full  flex flex-col gap-4   px-2 py-2`}
         >
-          <div className="w-[100%] flex  gap-2">
-            <div className="w-[33%] flex flex-col gap-2 ">
+          <div className="w-[100%] flex flex-col gap-2">
+            <label
+              className={`w-auto font-semibold text-sm ${
+                isDarkMode ? "text-black" : "text-[#BBBBBC]"
+              }`}
+            >
+              Product Images *
+            </label>
+            <div
+              className={` border border-dashed h-auto ${
+                isDarkMode ? "border-gray-100" : "border-gray-500"
+              } ${
+                isDarkMode ? "text-black" : "text-[#BBBBBC]"
+              } rounded-md px-2 py-2 font-medium text-xs ${
+                isDarkMode ? "bg-white" : "bg-[#1A1C1E]"
+              }`}
+            >
+              <div className="  flex justify-center">
+                <ImageUploader
+                  images={images}
+                  setImages={setImages}
+                  isDarkMode={isDarkMode}
+                ></ImageUploader>
+              </div>
+            </div>
+          </div>
+          <div className={`flex max-xl:flex-col gap-2`}>
+            <div className="w-[50%] max-xl:w-full flex flex-col gap-2">
               <label
                 className={`w-auto font-semibold text-sm ${
                   isDarkMode ? "text-black" : "text-[#BBBBBC]"
                 }`}
               >
-                Purchase Price *
+                Quantity In Stock *
               </label>
-              <Input
-                type="number"
-                placeholder="Enter Purchace price "
-                value={purchacePrice}
-                className={` border ${
-                  isDarkMode ? "border-gray-100" : "border-gray-500"
-                } ${
-                  isDarkMode ? "text-black" : "text-[#BBBBBC]"
-                } rounded-md px-2 py-2 font-medium text-xs ${
-                  isDarkMode ? "bg-white" : "bg-[#1A1C1E]"
-                }`}
-                onChange={(e: any) => {
-                  e.target.value > 0
-                    ? setPurchasePrice(Number(e.target.value))
-                    : setPurchasePrice(0.0);
-                }}
-              ></Input>
+              <div className="flex gap-1">
+                <Input
+                  type="number"
+                  style={{ outline: "none" }}
+                  value={qteStock}
+                  step={"1"}
+                  min={"0"}
+                  className={`w-[95%] border ${
+                    isDarkMode ? "border-gray-100" : "border-gray-500"
+                  } ${
+                    isDarkMode ? "text-black" : "text-[#BBBBBC]"
+                  } rounded-md px-2 py-2 font-medium text-xs  ${
+                    isDarkMode ? "bg-white" : "bg-[#1A1C1E]"
+                  }`}
+                  placeholder="Number of Quantity in Stock (Max value should be enter is 3000)"
+                  onChange={(e: any) =>
+                    e.target.value > 0 && e.target.value < 3000
+                      ? setQteStock(Number.parseInt(e.target.value, 10))
+                      : setQteStock(0)
+                  }
+                />
+              </div>
             </div>
-            <div className="w-[33%] flex flex-col gap-2 ">
+            <div className="w-[50%] flex flex-col gap-2 ">
               <label
                 className={`w-auto font-semibold text-sm ${
                   isDarkMode ? "text-black" : "text-[#BBBBBC]"
@@ -834,158 +539,7 @@ export default function AddProduct() {
                 }}
               ></Input>
             </div>
-            <div className="w-[33%] flex flex-col gap-2 ">
-              <label
-                className={`w-auto font-semibold text-sm ${
-                  isDarkMode ? "text-black" : "text-[#BBBBBC]"
-                }`}
-              >
-                TVA Price *
-              </label>
-              <Input
-                type="number"
-                placeholder="Enter TVA price "
-                value={tvaPrice}
-                className={` border ${
-                  isDarkMode ? "border-gray-100" : "border-gray-500"
-                } ${
-                  isDarkMode ? "text-black" : "text-[#BBBBBC]"
-                } rounded-md px-2 py-2 font-medium text-xs ${
-                  isDarkMode ? "bg-white" : "bg-[#1A1C1E]"
-                }`}
-                onChange={(e: any) => {
-                  e.target.value > 0
-                    ? setTvaPrice(Number(e.target.value))
-                    : setTvaPrice(0.0);
-                }}
-              ></Input>
-            </div>
           </div>
-
-          <div className="w-[100%] flex flex-col gap-2">
-            <label
-              className={`w-auto font-semibold text-sm ${
-                isDarkMode ? "text-black" : "text-[#BBBBBC]"
-              }`}
-            >
-              Product Images *
-            </label>
-            <div
-              className={` border border-dashed h-auto ${
-                isDarkMode ? "border-gray-100" : "border-gray-500"
-              } ${
-                isDarkMode ? "text-black" : "text-[#BBBBBC]"
-              } rounded-md px-2 py-2 font-medium text-xs ${
-                isDarkMode ? "bg-white" : "bg-[#1A1C1E]"
-              }`}
-            >
-              <div className="  flex justify-center">
-                {" "}
-                {/* <Label
-                  className={`w-auto font-semibold text-sm ${
-                    isDarkMode ? "text-black" : "text-[#BBBBBC]"
-                  }`}
-                >
-                  Click To Select Your Images Here
-                </Label>
-                <Input
-                  type="file"
-                  id="fileProduct"
-                  accept="image/*"
-                  multiple
-                  className="hidden"
-                ></Input> */}
-                <ImageUploader
-                  images={images}
-                  setImages={setImages}
-                  isDarkMode={isDarkMode}
-                ></ImageUploader>
-              </div>
-            </div>
-          </div>
-
-          <div className="w-[100%] flex flex-col gap-2">
-            <label
-              className={`w-auto font-semibold text-sm ${
-                isDarkMode ? "text-black" : "text-[#BBBBBC]"
-              }`}
-            >
-              Characteristics *
-            </label>
-            <div
-              className={` border border-dashed h-auto ${
-                isDarkMode ? "border-gray-100" : "border-gray-500"
-              } ${
-                isDarkMode ? "text-black" : "text-[#BBBBBC]"
-              } rounded-md px-2 py-2 font-medium text-xs ${
-                isDarkMode ? "bg-white" : "bg-[#1A1C1E]"
-              }`}
-            >
-              <div className="  flex justify-center">
-                <AddCaracteristique
-                  idSousCategorie={sousCategorie}
-                  isDarkMode={isDarkMode}
-                  cara={cara}
-                  length={
-                    CaracteristiquesSousCategorie
-                      ? CaracteristiquesSousCategorie.length
-                      : 0
-                  }
-                  onSelect={handleCaracteristique}
-                  EditName={handleEditCaracteristique}
-                ></AddCaracteristique>
-              </div>
-            </div>
-          </div>
-          {qteStock > 0 && (
-            <div className="w-[100%] flex flex-col gap-2">
-              <label
-                className={`w-auto font-semibold text-sm ${
-                  isDarkMode ? "text-black" : "text-[#BBBBBC]"
-                }`}
-              >
-                Serials *
-              </label>
-              <div
-                className={` border border-dashed h-auto ${
-                  isDarkMode ? "border-gray-100" : "border-gray-500"
-                } ${
-                  isDarkMode ? "text-black" : "text-[#BBBBBC]"
-                } rounded-md px-2 py-2 font-medium text-xs ${
-                  isDarkMode ? "bg-white" : "bg-[#1A1C1E]"
-                }`}
-              >
-                <div className=" grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-2">
-                  {Array.from({ length: qteStock }, (_, index: number) => (
-                    <div key={index} className=" flex  gap-1 ">
-                      <Label
-                        className={`w-auto flex font-semibold text-[12px]  ${
-                          isDarkMode ? "text-black" : "text-[#BBBBBC]"
-                        }  ${
-                          isDarkMode ? "bg-white" : "bg-[#1A1C1E]"
-                        } items-center  `}
-                      >
-                        {`SERIAL ${index + 1}`}
-                      </Label>
-                      <Input
-                        className={`w-auto  ${
-                          isDarkMode ? "bg-white" : "bg-[#1A1C1E]"
-                        }`}
-                        onBlur={
-                          (e: any) => handleSerialInput(index, e.target.value)
-                          //   e.preventDefault();
-                          //   const seri: string[] = [...serials];
-                          //   seri[index] = e.target.value;
-                          //   setSerials(seri);
-                          // }
-                        }
-                      ></Input>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
           <div
             className={`absolute top-[99%] w-full rounded-b-md right-0  border border-dashed flex justify-end ${
               isDarkMode ? "bg-white" : "bg-[#1A1C1E]"

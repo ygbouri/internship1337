@@ -34,7 +34,9 @@ export default function Page() {
   }, []);
   useEffect(() => {
     if (status === "authenticated") {
-      window.location.href = "/"; // Redirige l'utilisateur authentifié
+      let pathRedirect: string | null = localStorage.getItem("pathBeforSigin");
+      if (pathRedirect) window.location.href = pathRedirect;
+      else window.location.href = "/";
     }
   }, [status]);
 

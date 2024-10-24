@@ -52,19 +52,11 @@ model article {
   name_article String
   prix Float
   quantite_stock Int
-  quantite_minimal Int? @default(0)
-  prix_TVA Float
-  prix_achat Float
-  prix_remise Float @default(0.0) 
   image String[]
   description String 
   small_description String
   etat etat_article
   marque String
-  new_nbr_days Int
-  OrdreAffichage Int? @default(0)
-  lot String? @default("")
-  id_fournisseur String
   commandes commande[]
   wishlist user[]
   sous_categories sous_categorie[] 
@@ -113,15 +105,13 @@ model user {
 model categorie {
   id_categorie String @id @default(uuid())
   name String @unique
-  ImageCouverture String
-  description String  
+  description String
   sous_categories sous_categorie[]
 }
 
 model sous_categorie {
   id_souscategorie String @id @default(uuid())
   name String @unique
-  ImageCouverture String
   description String   
   articles article[] 
   id_categorie String

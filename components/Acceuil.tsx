@@ -27,9 +27,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import {
   allCategorieDto,
-  caraSousCateRequired,
   filterCara,
-  productCara,
   ProductGet,
   SousCategorie,
 } from "@/types/Api";
@@ -39,13 +37,16 @@ import { io } from "socket.io-client";
 import { Label } from "./ui/label";
 import { it } from "node:test";
 import { RadioGroupDemo } from "./myCustomComponents/radioButtion";
-import { allCategorie } from "@/service/fetchCategorie";
+import {
+  allCategorie,
+  allSousCategorie,
+  getAllProductsofSousGa,
+} from "@/service/fetchCategorie";
 
 export default function Acceuil() {
   const [showCategorie, setShow] = useState(false);
   const [showSousCategorie, setShowSousCategorie] = useState(false);
-  const [products, setProducts] = useState<productCara[]>([]);
-  const [productsFilter, setProductsFilter] = useState<productCara[]>([]);
+  const [products, setProducts] = useState<ProductGet[]>([]);
 
   // const [showSousCategorie, setSousShow] = useState(false);
   // const [showIcons, setShowIcons] = useState(false);
@@ -61,7 +62,8 @@ export default function Acceuil() {
   const [idSousCategorie, setSousCategorie] = useState("");
   const [refetchFilterProduct, setRefetchFilterProduct] = useState(false);
   const [Categorie, setCategorie] = useState<allCategorieDto[]>([]);
-  const [Cara, setCara] = useState<caraSousCateRequired[]>([]);
+  const [SousCategories, setSousCategories] = useState<SousCategorie[]>([]);
+
   let id = 0;
   const queryClient = useQueryClient();
   const selectedItemsMap: Map<string, filterCara> = new Map<
@@ -81,65 +83,31 @@ export default function Acceuil() {
   useEffect(() => {
     const getAllCategorie = async () => {
       const data = await allCategorie();
-      console.log("first", data);
       if (data) setCategorie(data);
-      console.log("shit here we go again", Categorie);
     };
     getAllCategorie();
   }, []);
-  const handleSelectCara = (item: filterCara) => {
-    // if (selectedItemCaract.some((items:filterCara)=>(items.name === item.name) && (items.value === item.value)))
-    //   setSelectedItemCaract((prev:filterCara[])=> prev.filter((items:filterCara)=>(items.name !== item.name) && (items.value !== item.value)))
-    // else
-    // {
-    //   setSelectedItemCaract((prev:filterCara[])=>prev.includes(item)?prev.filter((i)=>i!=item):[...prev,item]);
-    // }
-    if (selectedItemsMap.has(item.name)) {
-      if (selectedItemsMap.get(item.name)?.value != item.value) {
-        selectedItemsMap.set(item.name, item);
-        setSelectedItemCaract((prev: filterCara[]) =>
-          prev.filter((items: filterCara) => items.name !== item.name)
-        );
-        setSelectedItemCaract((prev: filterCara[]) =>
-          prev.includes(item) ? prev.filter((i) => i != item) : [...prev, item]
-        );
-      } else {
-        selectedItemsMap.delete(item.name);
-        setSelectedItemCaract((prev: filterCara[]) =>
-          prev.filter(
-            (items: filterCara) =>
-              items.name !== item.name && items.value !== item.value
-          )
-        );
-      }
-    } else {
-      selectedItemsMap.set(item.name, item);
-      setSelectedItemCaract((prev: filterCara[]) =>
-        prev.includes(item) ? prev.filter((i) => i != item) : [...prev, item]
-      );
-    }
-  };
 
   useEffect(() => {
-    // queryClient.invalidateQueries({ queryKey: ["articles", idSousCategorie] });
+    if (idCategorie) {
+      const getSousCategories = async () => {
+        const data = await allSousCategorie(idCategorie);
+        if (data) setSousCategories(data);
+      };
+      getSousCategories();
+    }
+  }, [idCategorie]);
+  useEffect(() => {
+    if (idSousCategorie) {
+      const getArticles = async () => {
+        const data = await getAllProductsofSousGa(idSousCategorie);
+        if (data) setProducts(data);
+      };
+      getArticles();
+    }
   }, [idSousCategorie]);
 
-  // const arr: checkbokCategorie[] = [
-  //   { id: "1", data: "hhhhhha" },
-  //   { id: "2", data: "hhhhhhb" },
-  //   { id: "3", data: "hhhhhhc" },
-  //   { id: "4", data: "hhhhhhd" },
-  //   { id: "5", data: "hhhhhhe" },
-  //   { id: "6", data: "hhhhhhf" },
-  //   { id: "7", data: "hhhhhhg" },
-  //   { id: "8", data: "hhhhhhh" },
-  //   { id: "9", data: "hhhhhhi" },
-  //   { id: "10", data: "hhhhhhj" },
-  //   { id: "11", data: "hhhhhhk" },
-  // ];
-  // const nm: number = 2012;
   let color: string = isDarkMode ? " text-black" : "text-[#BBBBBC] ";
-  // #2B2E31
   return (
     <div className="w-full h-auto max-sm:min-h-screen flex flex-col mx-auto px-4  gap-6 max-sm:space-y-3 mt-4 ">
       <div className="w-full max-sm:h-[80%] md:h-auto flex max-md:flex-col  md:justify-around max-sm:gap-3 sm:gap-3 md:gap-7  ">
@@ -170,11 +138,7 @@ export default function Acceuil() {
                           isDarkMode ? "text-[#8C9097]" : "text-white"
                         } font-bold text-xxs rounded-sm`}
                       >
-                        {item.sous_categories
-                          ?.reduce((acc: number, item: SousCategorie) => {
-                            return acc + item.articles?.length;
-                          }, 0)
-                          .toLocaleString("en-US")}
+                        {item.sous_categories.length.toLocaleString("en-US")}
                       </label>
                     </div>
                   )
@@ -195,38 +159,39 @@ export default function Acceuil() {
             <h1 className="w-full ml-4 mt-4 text-[#8D9198] font-bold">
               SUBCATEGORIES
             </h1>
-            {/* <div className="w-full flex flex-col ml-6 gap-4">
-              {SousCategories?.slice(
-                0,
-                showSousCategorie ? SousCategories.length : 4
-              ).map((item, index) => (
-                <div key={index} className="w-[90%]  flex justify-between">
-                  <CheckboxDemo
-                    key={item.id_souscategorie}
-                    parametre={item}
-                    isSelected={
-                      item.id_souscategorie === selectedItemSubCatgorie
-                    }
-                    onSelect={() => handleSelect(item.id_souscategorie, 1)}
-                  ></CheckboxDemo>
-                  <label
-                    className={`px-[2px] py-[2px] ${
-                      isDarkMode ? "bg-[#F3F6F8]" : " bg-[#2B2E31]"
-                    } ${
-                      isDarkMode ? "text-[#8C9097]" : "text-white"
-                    } font-bold text-xxs rounded-sm`}
-                  >
-                    {item.articles.length.toLocaleString("en-US")}
-                  </label>
-                </div>
-              ))}
+            <div className="w-full flex flex-col ml-6 gap-4">
+              {Array.isArray(SousCategories) &&
+                SousCategories?.slice(
+                  0,
+                  showSousCategorie ? SousCategories.length : 4
+                ).map((item, index) => (
+                  <div key={index} className="w-[90%]  flex justify-between">
+                    <CheckboxDemo
+                      key={item.id_souscategorie}
+                      parametre={item}
+                      isSelected={
+                        item.id_souscategorie === selectedItemSubCatgorie
+                      }
+                      onSelect={() => handleSelect(item.id_souscategorie, 1)}
+                    ></CheckboxDemo>
+                    <label
+                      className={`px-[2px] py-[2px] ${
+                        isDarkMode ? "bg-[#F3F6F8]" : " bg-[#2B2E31]"
+                      } ${
+                        isDarkMode ? "text-[#8C9097]" : "text-white"
+                      } font-bold text-xxs rounded-sm`}
+                    >
+                      {item.articles.length.toLocaleString("en-US")}
+                    </label>
+                  </div>
+                ))}
               <button
                 onClick={() => setShowSousCategorie(!showSousCategorie)}
                 className="w-[20%] h-6 mb-4 px-2 py-1 bg-[#F3EFFC] text-[#855ADF] text-xs rounded-lg transition-colors"
               >
                 {showSousCategorie ? "More-" : "More+"}
               </button>
-            </div> */}
+            </div>
           </div>
 
           <div
@@ -242,115 +207,120 @@ export default function Acceuil() {
                 handleSelectCara(item);
               }}
             ></RadioGroupDemo> */}
-            <CheckboxDemoCara
+            {/* <CheckboxDemoCara
               cara={Cara}
               isSelected={SelectedItem}
               onSelect={(item: caraSousCateRequired) => {
                 setSelectedItem(item);
                 handleSelectCara(item);
               }}
-            ></CheckboxDemoCara>
+            ></CheckboxDemoCara> */}
           </div>
         </div>
 
         <div className="w-[100%]  md:h-full sm:min-h-full   min-sm:flex-col sm:grid max-sm:space-y-6  max-sm:grid-cols-1 sm:grid-cols-2 md:grid-cols-2 2xl:grid-cols-4  sm:gap-6 rounded-md  bg-transparent">
-          {products.map((item: productCara, index: number) => (
-            <div
-              key={item.article.id_article}
-              className={`relative group h-auto max-sm:w-[97%] w-[95%] max-sm:ml-1  aspect-card   ${
-                isDarkMode ? " bg-white" : " bg-[#1A1C1E]"
-              }  flex flex-col sm:gap-10 max-sm:gap-2 max-2xl:space-y-1 items-center rounded-lg `}
-            >
-              <div className="w-[90%] h-[500px] ">
-                <Link
-                  className=" w-full m-4 h-full cursor-pointer max-sm:p-1"
-                  href={`/product/${item.article.id_article}`}
-                >
-                  <Image
-                    src={`http://localhost:5000/file/product?fileName=${item.article.image[0]}&reference=${item.article.reference}`}
-                    alt={`image of product name's ${item.article.name_article}`}
-                    width={500}
-                    height={500}
-                    // layout="fill"
-                    // objectFit="cover"
-                    style={{ objectFit: "cover" }}
-                    className={`${
-                      isDarkMode ? " bg-[#F3F6F8]" : " bg-[#2B2E31]"
-                    }  w-[100%] h-[100%]  rounded-md border ${
-                      isDarkMode ? "border-gray-950" : "border-gray-50"
-                    } `}
-                  />
-                </Link>
-              </div>
-
+          {Array.isArray(products) &&
+            products.map((item: ProductGet, index: number) => (
               <div
-                className={`w-[40px] top-6   group-hover:opacity-100 group-hover:transition-opacity opacity-0 duration-300 gap-2 right-8 h-[100px] bg-transparent flex flex-col absolute`}
+                key={item.id_article}
+                className={`relative group h-auto max-sm:w-[97%] w-[95%] max-sm:ml-1  aspect-card   ${
+                  isDarkMode ? " bg-white" : " bg-[#1A1C1E]"
+                }  flex flex-col sm:gap-10 max-sm:gap-2 max-2xl:space-y-1 items-center rounded-lg `}
               >
-                <button className="bg-[#f1aeb5] rounded-lg w-[90%] h-6 flex justify-center items-center">
-                  <AiOutlineHeart style={{ color: "#dc3545" }} />
-                </button>
-                <button className="bg-[#F2EEFC] rounded-lg w-[90%] h-6 flex justify-center items-center">
-                  <SlBasketLoaded style={{ color: "#845ADF" }} />
-                </button>
-                <button className="bg-[#d1e7dd]  rounded-lg w-[90%] h-6 flex justify-center items-center">
-                  <AiOutlineEye style={{ color: "#198754" }} />
-                </button>
-              </div>
-              <div className="max-sm:w-full  sm:w-[90%] flex flex-col space-y-2 mb-4 max-sm:items-start sm:items-center max-sm:pl-4 max-sm:pr-3">
-                <div className="w-full flex flex-col items-start  ">
-                  <div className="w-full  flex items-start justify-between">
-                    <h3 className={`w-[50%]  ${color} text-sm font-bold`}>
-                      {item.article.name_article}
-                    </h3>
-                    <div className="w-[50%] flex items-center justify-end">
-                      <label
-                        htmlFor=""
-                        className="text-xs text-right font-bold text-[#F5B849]"
-                      >
-                        4.2
-                      </label>
-                      <AiFillStar
-                        className=" h-3"
-                        style={{ color: "#F5B849" }}
-                      />
+                <div className="w-[90%] h-[500px] ">
+                  <Link
+                    className=" w-full m-4 h-full cursor-pointer max-sm:p-1"
+                    href={`/product/${item.id_article}`}
+                  >
+                    <Image
+                      src={`/${item.image[0]}`}
+                      alt={`image of product name's ${item.name_article}`}
+                      width={500}
+                      height={500}
+                      // layout="fill"
+                      // objectFit="cover"
+                      style={{ objectFit: "cover" }}
+                      className={`${
+                        isDarkMode ? " bg-[#F3F6F8]" : " bg-[#2B2E31]"
+                      }  w-[100%] h-[100%]  rounded-md border ${
+                        isDarkMode ? "border-gray-950" : "border-gray-50"
+                      } `}
+                    />
+                  </Link>
+                </div>
+
+                <div
+                  className={`w-[40px] top-6   group-hover:opacity-100 group-hover:transition-opacity opacity-0 duration-300 gap-2 right-8 h-[100px] bg-transparent flex flex-col absolute`}
+                >
+                  <button className="bg-[#f1aeb5] rounded-lg w-[90%] h-6 flex justify-center items-center">
+                    <AiOutlineHeart style={{ color: "#dc3545" }} />
+                  </button>
+                  <button className="bg-[#F2EEFC] rounded-lg w-[90%] h-6 flex justify-center items-center">
+                    <SlBasketLoaded style={{ color: "#845ADF" }} />
+                  </button>
+                  <button className="bg-[#d1e7dd]  rounded-lg w-[90%] h-6 flex justify-center items-center">
+                    <AiOutlineEye style={{ color: "#198754" }} />
+                  </button>
+                </div>
+                <div className="max-sm:w-full  sm:w-[90%] flex flex-col space-y-2 mb-4 max-sm:items-start sm:items-center max-sm:pl-4 max-sm:pr-3">
+                  <div className="w-full flex flex-col items-start  ">
+                    <div className="w-full  flex items-start justify-between">
+                      <h3 className={`w-[50%]  ${color} text-sm font-bold`}>
+                        {item.name_article}
+                      </h3>
+                      <div className="w-[50%] flex items-center justify-end">
+                        <label
+                          htmlFor=""
+                          className="text-xs text-right font-bold text-[#F5B849]"
+                        >
+                          4.2
+                        </label>
+                        <AiFillStar
+                          className=" h-3"
+                          style={{ color: "#F5B849" }}
+                        />
+                      </div>
+                    </div>
+                    <div className="w-[80%] flex ">
+                      <h5 className="text-xs text-[#BBBCC1]">
+                        fjdklsfjdklsfjdklsj
+                      </h5>
                     </div>
                   </div>
-                  <div className="w-[80%] flex ">
-                    <h5 className="text-xs text-[#BBBCC1]">
-                      fjdklsfjdklsfjdklsj
-                    </h5>
-                  </div>
-                </div>
-                <div className="max-sm:w-[80%]  sm:w-[100%] flex flex-col gap-1">
-                  <div className="w-full flex space-x-2 max-sm:items-center sm:items-start ">
-                    {item.article.prix > 0 ? (
-                      <h5 className={`text-md font-bold ${color}`}>
-                        ${item.article.prix}
-                      </h5>
+                  <div className="max-sm:w-[80%]  sm:w-[100%] flex flex-col gap-1">
+                    <div className="w-full flex space-x-2 max-sm:items-center sm:items-start ">
+                      {item.prix > 0 ? (
+                        <h5 className={`text-md font-bold ${color}`}>
+                          ${item.prix}
+                        </h5>
+                      ) : (
+                        <h5
+                          className={`text-md text-[#BBBCC1] ${
+                            !isDarkMode ? "opacity-50" : ""
+                          } line-through font-bold`}
+                        >
+                          ${item.prix}
+                        </h5>
+                      )}
+                    </div>
+                    {item.prix != 0 ? (
+                      <div className="w-[80%] max-sm:mb-5 flex justify-start  items-center">
+                        <img
+                          src="/product/discount.svg"
+                          alt=""
+                          className="h-3"
+                        />
+                        <h5 className="text-[#26BF94] text-xxs font-bold">
+                          Offer Price $599
+                        </h5>
+                      </div>
                     ) : (
-                      <h5
-                        className={`text-md text-[#BBBCC1] ${
-                          !isDarkMode ? "opacity-50" : ""
-                        } line-through font-bold`}
-                      >
-                        ${item.article.prix_TVA}
-                      </h5>
+                      <></>
                     )}
                   </div>
-                  {item.article.prix != 0 ? (
-                    <div className="w-[80%] max-sm:mb-5 flex justify-start  items-center">
-                      <img src="/product/discount.svg" alt="" className="h-3" />
-                      <h5 className="text-[#26BF94] text-xxs font-bold">
-                        Offer Price $599
-                      </h5>
-                    </div>
-                  ) : (
-                    <></>
-                  )}
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       </div>
     </div>
